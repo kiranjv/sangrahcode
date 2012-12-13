@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE hibernate-configuration PUBLIC
+"-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
+<hibernate-configuration>
+    <session-factory name="sangrahpossession">
+        <property name="hibernate.bytecode.use_reflection_optimizer">false</property>
+        <property name="hibernate.connection.driver_class">org.sqlite.JDBC</property>
+        <property name="hibernate.connection.url">jdbc:sqlite:Database/sample.db</property>
+        <property name="hibernate.dialect">com.sqlite.dialect.SQLiteDialect</property>
+        <property name="hibernate.search.autoregister_listeners">false</property>
+       
+        <mapping resource="com/java/sangrah/models/VtigerProductcf.hbm.xml" />
+        <mapping resource="com/java/sangrah/models/VtigerCashreceiptgrouprel.hbm.xml" />
+        <mapping resource="com/java/sangrah/models/VtigerBarcodecf.hbm.xml" />
+        <mapping resource="com/java/sangrah/models/VtigerCustomerportalPrefs.hbm.xml" />
+        <mapping resource="com/java/sangrah/models/VtigerUser2mergefields.hbm.xml" />
+        <mapping resource="com/java/sangrah/models/VtigerContactsubdetails.hbm.xml" />
+        <mapping resource="com/java/sangrah/models/VtigerUserModulePreferences.hbm.xml" />
+        <mapping resource="com/java/sangrah/models/VtigerCashreceipt.hbm.xml" />
+        <mapping resource="com/java/sangrah/models/VtigerCrmentityrel.hbm.xml" />
+        <mapping resource="com/java/sangrah/models/VtigerCustomerportalTabs.hbm.xml" />
+        <mapping resource="com/java/sangrah/models/VtigerInvoicebillads.hbm.xml" />
+        <mapping resource="com/java/sangrah/models/VtigerCustomerportalFields.hbm.xml" />
+        <mapping resource="com/java/sangrah/models/VtigerCrmentitySeq.hbm.xml" />
+        <mapping resource="com/java/sangrah/models/VtigerCustomerdetails.hbm.xml" />
+        <mapping resource="com/java/sangrah/models/VtigerCrmentity.hbm.xml" />
+        <mapping resource="com/java/sangrah/models/VtigerBarcode.hbm.xml" />
+        <mapping resource="com/java/sangrah/models/VtigerWarehouse.hbm.xml" />
+        <mapping resource="com/java/sangrah/models/VtigerContpotentialrel.hbm.xml" />
+        <mapping resource="com/java/sangrah/models/VtigerContactaddress.hbm.xml" />
+        <mapping resource="com/java/sangrah/models/VtigerInventorysubproductrel.hbm.xml" />
+        <mapping resource="com/java/sangrah/models/VtigerWarehousestoreInventorytransaction.hbm.xml" />
+        <mapping resource="com/java/sangrah/models/VtigerContacttype.hbm.xml" />
+        <mapping resource="com/java/sangrah/models/VtigerBarcodegrouprel.hbm.xml" />
+        <mapping resource="com/java/sangrah/models/VtigerContactdetails.hbm.xml" />
+        <mapping resource="com/java/sangrah/models/VtigerUsers2group.hbm.xml" />
+        <mapping resource="com/java/sangrah/models/VtigerReportsGroup.hbm.xml" />
+        <mapping resource="com/java/sangrah/models/VtigerWarehouseStock.hbm.xml" />
+        <mapping resource="com/java/sangrah/models/VtigerAccount.hbm.xml" />
+        <mapping resource="com/java/sangrah/models/VtigerInventorytransaction.hbm.xml" />
+        <mapping resource="com/java/sangrah/models/VtigerInvoiceRecurringInfo.hbm.xml" />
+        <mapping resource="com/java/sangrah/models/VtigerWarehousecf.hbm.xml" />
+        <mapping resource="com/java/sangrah/models/VtigerInvoicestatushistory.hbm.xml" />
+        <mapping resource="com/java/sangrah/models/VtigerUsertype.hbm.xml" />
+        <mapping resource="com/java/sangrah/models/VtigerInvoicestatus.hbm.xml" />
+        <mapping resource="com/java/sangrah/models/VtigerCategorygrouprel.hbm.xml" />
+        <mapping resource="com/java/sangrah/models/VtigerInvoicestatusSeq.hbm.xml" />
+        <mapping resource="com/java/sangrah/models/VtigerReports.hbm.xml" />
+        <mapping resource="com/java/sangrah/models/VtigerCategory.hbm.xml" />
+        <mapping resource="com/java/sangrah/models/VtigerInventoryTandcSeq.hbm.xml" />
+        <mapping resource="com/java/sangrah/models/VtigerUsers.hbm.xml" />
+        <mapping resource="com/java/sangrah/models/VtigerDebtortransaction.hbm.xml" />
+        <mapping resource="com/java/sangrah/models/VtigerDateFormat.hbm.xml" />
+        <mapping resource="com/java/sangrah/models/VtigerInvoicecf.hbm.xml" />
+        <mapping resource="com/java/sangrah/models/VtigerCashreceiptcf.hbm.xml" />
+        <mapping resource="com/java/sangrah/models/VtigerProducts.hbm.xml" />
+        <mapping resource="com/java/sangrah/models/VtigerInventoryproductrel.hbm.xml" />
+        <mapping resource="com/java/sangrah/models/VtigerInventorytaxinfoSeq.hbm.xml" />
+        <mapping resource="com/java/sangrah/models/VtigerInventorynotification.hbm.xml" />
+        <mapping resource="com/java/sangrah/models/VtigerCustomview.hbm.xml" />
+        <mapping resource="com/java/sangrah/models/VtigerInvoice.hbm.xml" />
+        <mapping resource="com/java/sangrah/models/VtigerInventoryshippingrel.hbm.xml" />
+        <mapping resource="com/java/sangrah/models/VtigerUsersSeq.hbm.xml" />
+        <mapping resource="com/java/sangrah/models/VtigerCrmentitynotesrel.hbm.xml" />
+        <mapping resource="com/java/sangrah/models/VtigerCashreturndetails.hbm.xml" />
+        <mapping resource="com/java/sangrah/models/VtigerAccountdepstatus.hbm.xml" />
+        <mapping resource="com/java/sangrah/models/VtigerDateFormatSeq.hbm.xml" />
+        <mapping resource="com/java/sangrah/models/VtigerProducttaxrel.hbm.xml" />
+        <mapping resource="com/java/sangrah/models/VtigerUser2role.hbm.xml" />
+        <mapping resource="com/java/sangrah/models/VtigerUsersLastImport.hbm.xml" />
+        <mapping resource="com/java/sangrah/models/VtigerInventoryTandc.hbm.xml" />
+        <mapping resource="com/java/sangrah/models/VtigerInventorytaxinfo.hbm.xml" />
+        <mapping resource="com/java/sangrah/models/VtigerAccountbillads.hbm.xml" />
+        <mapping resource="com/java/sangrah/models/VtigerWarehousegrouprel.hbm.xml" />
+        <mapping resource="com/java/sangrah/models/VtigerProductcurrencyrel.hbm.xml" />
+        <mapping resource="com/java/sangrah/models/VtigerProductcategorySeq.hbm.xml" />
+        <mapping resource="com/java/sangrah/models/VtigerProductcategory.hbm.xml" />
+        <mapping resource="com/java/sangrah/models/VtigerCategorycf.hbm.xml" />
+        <mapping resource="com/java/sangrah/models/VtigerContractPriority.hbm.xml" />
+        <mapping resource="com/java/sangrah/models/VtigerProductcollaterals.hbm.xml" />
+        <mapping resource="com/java/sangrah/models/VtigerContactscf.hbm.xml" />
+        <mapping resource="com/java/sangrah/models/VtigerInventorynotificationSeq.hbm.xml" />
+        <mapping resource="com/java/sangrah/models/SalereturnProductdetail.hbm.xml" />
+        <mapping resource="com/java/sangrah/models/VtigerInvoiceshipads.hbm.xml" />
+        
+         <!-- Manaully added modules -->
+        <mapping resource="com/java/sangrah/models/VtigerModentitynum.hbm.xml" />
+        <mapping resource="com/java/sangrah/models/VtigerModentityNumSeq.hbm.xml" />
+        <mapping resource="com/java/sangrah/models/VtigerRoyalityAmount.hbm.xml"/> 
+        <mapping resource="com/java/sangrah/models/VtigerSalesman.hbm.xml"/>
+        <mapping resource="com/java/sangrah/models/VtigerRoyality.hbm.xml"/>
+        <mapping resource="com/java/sangrah/models/VtigerContactroyality.hbm.xml"/>
+        
+    </session-factory>
+</hibernate-configuration>
