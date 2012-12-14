@@ -46,14 +46,14 @@ public class InvoiceController extends InvoiceUtil {
 		int redeem_points = 0;
 		String customername = null;
 		String mobile = null;
-		if (!royalityhash.isEmpty() ) {
+		if (!royalityhash.isEmpty()) {
 
-			 royalityno = royalityhash.get("royalityno");
-			 String redeempoints = royalityhash.get("redeempoints");
-			 if(redeempoints != null && !redeempoints.isEmpty())
-			 redeem_points = Integer.parseInt(redeempoints);
-			 customername = royalityhash.get("customername");
-			 mobile = royalityhash.get("customermobileno");
+			royalityno = royalityhash.get("royalityno");
+			String redeempoints = royalityhash.get("redeempoints");
+			if (redeempoints != null && !redeempoints.equalsIgnoreCase(" ") && !redeempoints.isEmpty())
+				redeem_points = Integer.parseInt(redeempoints);
+			customername = royalityhash.get("customername");
+			mobile = royalityhash.get("customermobileno");
 		}
 
 		String grandtotal = String.valueOf(invoice_grandamount);
@@ -301,10 +301,11 @@ public class InvoiceController extends InvoiceUtil {
 			System.out.println("vitger_inventorytransaction query " + i + " is : " + hsql);
 			List<VtigerInventorytransaction> transactions = DBLocalHelper.executeHQuery(hsql);
 
-			int max_transactionindex = 0;
-			if (transactions.size() != 0)
-				max_transactionindex = transactions.size() - 1;
-			int max_transactionid = transactions.get(max_transactionindex).getTransactionId();
+			int max_transactionid = 0;
+			if (transactions.size() != 0) {
+				int index  = transactions.size() - 1;
+				max_transactionid = transactions.get(index).getTransactionId();
+			}
 			System.out.println("vitger_inventorytransaction query " + i + " is completed ");
 
 			// SELECT warehousestore_transaction_id AS MAX, opening_stock_qty,
