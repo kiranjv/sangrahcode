@@ -42,12 +42,19 @@ public class InvoiceController extends InvoiceUtil {
 
 	public int saveInvoice(List<InvoiceProduct> invoceproduct_list, String[] netprice_list, float invoice_totalamount, float invoice_totaldiscount,
 				float invoice_grandamount, HashMap<String, String> royalityhash) {
+		String royalityno = null;
+		int redeem_points = 0;
+		String customername = null;
+		String mobile = null;
+		if (!royalityhash.isEmpty() ) {
 
-		String royalityno = royalityhash.get("royalityno");
-		int redeem_points = Integer.parseInt(royalityhash.get("redeempoints"));
-		String customername = royalityhash.get("customername");
-		String mobile = royalityhash.get("customermobileno");
-		
+			 royalityno = royalityhash.get("royalityno");
+			 String redeempoints = royalityhash.get("redeempoints");
+			 if(redeempoints != null && !redeempoints.isEmpty())
+			 redeem_points = Integer.parseInt(redeempoints);
+			 customername = royalityhash.get("customername");
+			 mobile = royalityhash.get("customermobileno");
+		}
 
 		String grandtotal = String.valueOf(invoice_grandamount);
 		String discountamount = String.valueOf(invoice_totaldiscount);
@@ -187,8 +194,7 @@ public class InvoiceController extends InvoiceUtil {
 				int royalityid = 0;
 				if (maxroyalt != null)
 					royalityid = maxroyalt.getRoyalityid() + 1;
-				VtigerContactroyality insertcontactroyalty = new VtigerContactroyality(royalityid, cust_id, royalityno,
-							royalitpointsearned);
+				VtigerContactroyality insertcontactroyalty = new VtigerContactroyality(royalityid, cust_id, royalityno, royalitpointsearned);
 				DBLocalHelper.saveRecord(VtigerContactroyality.class.getSimpleName(), insertcontactroyalty);
 
 			}

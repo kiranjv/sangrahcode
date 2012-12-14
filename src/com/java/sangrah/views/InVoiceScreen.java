@@ -850,6 +850,8 @@ public class InVoiceScreen extends javax.swing.JPanel {
 				int selectedrow = table_invoice.getSelectedRow();
 				System.out.println("selected row: " + selectedrow);
 				if (selectedrow > -1) {
+					
+					float itemmrp = Float.parseFloat((String)table_invoiceModel.getValueAt(selectedrow, mrp_index));
 					// remove invoice from table and hashmap
 					String deleted_barcode = (String) table_invoiceModel.getValueAt(selectedrow, barcode_index);
 					products_hashmap.remove(deleted_barcode);
@@ -857,6 +859,19 @@ public class InVoiceScreen extends javax.swing.JPanel {
 					int numitems = table_invoice.getRowCount();
 					System.out.println("Remaining rows "+numitems);
 					lable_numitems.setText(" Items: " + numitems);
+					
+					//deduce amount from total, grandtotal, rslabel
+					String rsstring = label_rsamount.getText().substring(3);
+					System.out.println("rs substring: "+rsstring);
+					float rsamount = Float.parseFloat(rsstring);
+					label_rsamount.setText("Rs. "+String.valueOf(rsamount - itemmrp));
+					
+					float totalamount = Float.parseFloat(totalamount_lable.getText());
+					totalamount_lable.setText(String.valueOf(totalamount - itemmrp));
+					
+					
+					float grandtotal = Float.parseFloat(grandtotal_lable.getText());
+					grandtotal_lable.setText(String.valueOf(grandtotal - itemmrp));
 				} else {
 					barcode_field.requestFocus(true);
 				}
@@ -994,6 +1009,7 @@ public class InVoiceScreen extends javax.swing.JPanel {
 					JOptionPane.showMessageDialog(null, "No product available");
 				} else {
 					int exist_rownum = isProductAlreadyInTable(products.get(0), barcode);
+					System.out.println("is row exist row number: " + exist_rownum);
 					if (exist_rownum == -1) {
 						System.out.println("Add products to hashmap with barcode key");
 						for (Iterator iterator = products.iterator(); iterator.hasNext();) {
@@ -1029,7 +1045,7 @@ public class InVoiceScreen extends javax.swing.JPanel {
 		int barcode_colnum = 1;
 		if (rows_num != 0) {
 			for (int i = 0; i < rows_num; i++) {
-				String row_barcode = (String) table_invoiceModel.getValueAt(i, barcode_colnum);
+				String row_barcode = (String) table_invoiceModel.getValueAt(i, barcode_index);
 				if (row_barcode.equalsIgnoreCase(barcode)) {
 					System.out.println("row_barcode: " + row_barcode + " barcode:" + barcode + " exist row number: " + i);
 					exist_rownum = i;
