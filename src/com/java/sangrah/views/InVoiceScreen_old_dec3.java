@@ -562,7 +562,7 @@ public class InVoiceScreen_old_dec3 extends javax.swing.JPanel {
 						System.out.println("Starting invoices save");
 						int crmid = new InvoiceController().saveInvoice(invoceproduct_list,
 									netprice_list, invoice_totalamount, invoice_totaldiscount,
-									invoice_grandamount);
+									invoice_grandamount, null);
 						System.out.println("Invoice save completed id: " + crmid);
 						System.out.println("------------------------------------------");
 						System.out.println();

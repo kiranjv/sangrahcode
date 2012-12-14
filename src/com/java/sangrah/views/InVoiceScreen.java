@@ -65,6 +65,7 @@ import com.java.sangrah.models.InvoiceProduct;
 import com.java.sangrah.models.VtigerContactdetails;
 import com.java.sangrah.models.VtigerContactroyality;
 import com.java.sangrah.models.VtigerProducts;
+import com.java.sangrah.models.VtigerRoyality;
 import com.java.sangrah.utils.DateUtils;
 import com.java.sangrah.utils.Util;
 
@@ -574,6 +575,7 @@ public class InVoiceScreen extends javax.swing.JPanel {
 			redeem_royaltypoints_field = new JTextField();
 			RoyeltyPanel_Box.add(redeem_royaltypoints_field);
 			redeem_royaltypoints_field.setBounds(145, 324, 192, 30);
+			redeem_royaltypoints_field.addActionListener(RedeempointActionListener);
 			{
 				royeltyno_mainfield = new JTextField();
 				RoyeltyPanel_Box.add(royeltyno_mainfield);
@@ -721,15 +723,13 @@ public class InVoiceScreen extends javax.swing.JPanel {
 							prepareSaveInvoice();
 							System.out.println("preparing invoice data completed");
 
-							
-							  System.out.println("Starting invoices save"); int crmid = new
-							  InvoiceController().saveInvoice(invoceproduct_list, netprice_list,
-							  invoice_totalamount, invoice_totalitemsdiscount,
-							  invoice_grandamount, royality_hashmap);
-							  System.out.println("Invoice save completed id: " + crmid);
-							  System.out.println("------------------------------------------");
-							  System.out.println(); System.out.println();
-							 
+							System.out.println("Starting invoices save");
+							int crmid = new InvoiceController().saveInvoice(invoceproduct_list, netprice_list, invoice_totalamount,
+										invoice_totalitemsdiscount, invoice_grandamount, royality_hashmap);
+							System.out.println("Invoice save completed id: " + crmid);
+							System.out.println("------------------------------------------");
+							System.out.println();
+							System.out.println();
 
 							// print invoice
 							System.out.println("Printing invoice receipt");
@@ -854,6 +854,9 @@ public class InVoiceScreen extends javax.swing.JPanel {
 					String deleted_barcode = (String) table_invoiceModel.getValueAt(selectedrow, barcode_index);
 					products_hashmap.remove(deleted_barcode);
 					table_invoiceModel.removeRow(selectedrow);
+					int numitems = table_invoice.getRowCount();
+					System.out.println("Remaining rows "+numitems);
+					lable_numitems.setText(" Items: " + numitems);
 				} else {
 					barcode_field.requestFocus(true);
 				}
@@ -874,8 +877,11 @@ public class InVoiceScreen extends javax.swing.JPanel {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				System.out.println("Select royalty action performed.");
-				royeltyno_mainfield.requestFocus(true);
-				JOptionPane.showMessageDialog(null, "royalty select action");
+				int rows = table_invoice.getRowCount();
+				if (rows > 0)
+					royeltyno_mainfield.requestFocus(true);
+				else
+					JOptionPane.showMessageDialog(null, "Invoices are empty");
 			}
 		});
 		actionMap.put("productLookup", new AbstractAction() {
@@ -1006,7 +1012,6 @@ public class InVoiceScreen extends javax.swing.JPanel {
 
 		}
 	};
-	
 
 	/**
 	 * Check product invoice table any existing invoice available.
@@ -1241,13 +1246,13 @@ public class InVoiceScreen extends javax.swing.JPanel {
 		}
 
 		// update amounts to labels
-		totalamount_lable.setText(String.valueOf(totalamount));
+		totalamount_lable.setText(String.valueOf(totalgrand));
 		// update royalty discount label
 		discountamount_lable.setText(String.valueOf(invoice_royaltydiscount));
 		// update grand total label
-		grandtotal_lable.setText(String.valueOf(totalgrand));
+		grandtotal_lable.setText(String.valueOf(totalgrand - invoice_royaltydiscount));
 		// update label_rsamount
-		label_rsamount.setText("Rs. " + String.valueOf(totalgrand));
+		label_rsamount.setText("Rs. " + String.valueOf(totalgrand - invoice_royaltydiscount));
 
 	}
 
@@ -1302,9 +1307,9 @@ public class InVoiceScreen extends javax.swing.JPanel {
 		/* read royalty fields information */
 		royality_hashmap = new HashMap<String, String>();
 		String royalty_number = royelty_update_field.getText();
-		
-		if(royalty_number != null && !royalty_number.isEmpty()) {
-			System.out.println("Entered royality number: "+royalty_number);
+
+		if (royalty_number != null && !royalty_number.isEmpty()) {
+			System.out.println("Entered royality number: " + royalty_number);
 			royality_hashmap.put("royalityno", royalty_number);
 			royality_hashmap.put("customername", this.textfield_customername.getText());
 			royality_hashmap.put("customermobileno", this.textfield_customer_mobileno.getText());
@@ -1400,14 +1405,23 @@ public class InVoiceScreen extends javax.swing.JPanel {
 					textfield_customername.setEditable(true);
 					textfield_customer_mobileno.setEditable(true);
 					redeem_royaltypoints_field.setEditable(false);
+					redeem_royaltypoints_field.setText(" ");
+					Total_money_earned_field.setText(" ");
+					discountamount_lable.setText("0");
+					total_royaltypoints_field.setText("");
+					textfield_customer_mobileno.requestFocus(true);
 				} else {
 					int contactid = contactroyality.getContactid();
 					System.out.println("Royality contact exist id - " + contactid);
 					VtigerContactdetails contact = rcontrollController.readContactDetails(contactid);
 					if (contact != null) {
 						textfield_customername.setText(contact.getFirstname() + contact.getLastname());
+						textfield_customername.setEditable(false);
 						textfield_customer_mobileno.setText(contact.getMobile());
+						textfield_customer_mobileno.setEditable(false);
 						total_royaltypoints_field.setText(String.valueOf(contactroyality.getRoyalitycount()));
+						redeem_royaltypoints_field.requestFocus(true);
+
 					} else {
 						System.out.println("Contact id " + contactid + " details not found in database.");
 					}
@@ -1415,6 +1429,37 @@ public class InVoiceScreen extends javax.swing.JPanel {
 				}
 			}
 
+		}
+	};
+
+	private ActionListener RedeempointActionListener = new ActionListener() {
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			String redeempoints_data = redeem_royaltypoints_field.getText().trim();
+			System.out.println("redeem points: " + redeempoints_data);
+			String H_RoyaltyUpdate = "From " + VtigerRoyality.class.getSimpleName() + " WHERE deleted=0";
+			System.out.println("query: " + H_RoyaltyUpdate);
+			List<VtigerRoyality> vtigerroyalitys = DBLocalHelper.executeHQuery(H_RoyaltyUpdate);
+			System.out.println("Number of royaltys: " + vtigerroyalitys.size());
+			VtigerRoyality vtigerroyality = vtigerroyalitys.get(0);
+			float royalityamount = Float.parseFloat(vtigerroyality.getRoyalityamount());
+			int royaltycount = vtigerroyality.getRoyalityCount();
+			int redeempoints = Integer.parseInt(redeempoints_data);
+			int royaltyamount = (int) Math.floor((float) (redeempoints / royaltycount) * royalityamount);
+			System.out.println("royaltyamount: " + royaltyamount);
+			float totalamount = Float.parseFloat(totalamount_lable.getText());
+			float grandtotal = totalamount - royaltyamount;
+
+			if (royaltyamount > totalamount) {
+				System.out.println("Royalty amount exceding total amount");
+				JOptionPane.showMessageDialog(null, "Royalty amount exceding total amount");
+			} else {
+				discountamount_lable.setText(String.valueOf(royaltyamount));
+				grandtotal_lable.setText(String.valueOf(grandtotal));
+				label_rsamount.setText("Rs  :" + String.valueOf(grandtotal) + " /-");
+				Total_money_earned_field.setText(String.valueOf(royaltyamount));
+			}
 		}
 	};
 
