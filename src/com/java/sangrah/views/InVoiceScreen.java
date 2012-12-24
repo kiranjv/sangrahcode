@@ -67,6 +67,7 @@ import com.java.sangrah.models.VtigerContactdetails;
 import com.java.sangrah.models.VtigerContactroyality;
 import com.java.sangrah.models.VtigerProducts;
 import com.java.sangrah.models.VtigerRoyality;
+import com.java.sangrah.models.VtigerWarehousestoreInventorytransaction;
 import com.java.sangrah.utils.DateUtils;
 import com.java.sangrah.utils.Util;
 
@@ -202,6 +203,7 @@ public class InVoiceScreen extends javax.swing.JFrame {
 		products_hashmap = new HashMap<String, VtigerProducts>();
 		initGUI();
 		setVisible(true);
+		setTitle("Invoice Page");
 		show();
 
 	}
@@ -727,37 +729,90 @@ public class InVoiceScreen extends javax.swing.JFrame {
 
 	private void setButtonClickListers() {
 		button_cardpayment.addActionListener(new ActionListener() {
-			
+
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
-				
+				cardpaymentaction();
 			}
 		});
-		
-		
+
 		button_cashtender.addActionListener(new ActionListener() {
-			
+
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
-				
+				cashtenderaction();
 			}
 		});
-		
+
 		button_foodcoupons.addActionListener(new ActionListener() {
-			
+
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
-				
+				foodcouponsaction();
+
 			}
 		});
-		
-		
-		
-		
-		
+
+		button_productlookup.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				productlookupaction();
+			}
+		});
+
+		button_salesreturn.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				salesreturnaction();
+			}
+		});
+
+		button_voidall.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				voidallaction();
+
+			}
+		});
+
+	}
+
+	protected void voidallaction() {
+		clearInvoiceTable();
+	}
+
+	protected void salesreturnaction() {
+		System.out.println("salesReturn action performed.");
+		button_salesreturn.requestFocus(true);
+		JOptionPane.showMessageDialog(null, "sales rerun action");
+	}
+
+	protected void productlookupaction() {
+		System.out.println("productLookup action performed.");
+		button_productlookup.requestFocus(true);
+		new ProductSearchView(InVoiceScreen.this);
+	}
+
+	protected void foodcouponsaction() {
+		System.out.println("foodCoupons action performed.");
+		button_foodcoupons.requestFocus(true);
+		JOptionPane.showMessageDialog(null, "food coupons action");
+	}
+
+	protected void cashtenderaction() {
+
+		System.out.println("cashTender action performed.");
+		JOptionPane.showMessageDialog(null, "Cash tender action");
+		button_cashtender.requestFocus(true);
+
+	}
+
+	protected void cardpaymentaction() {
+		System.out.println("card Payment action performed.");
+		button_cardpayment.requestFocus(true);
+		JOptionPane.showMessageDialog(null, "Card payment action");
 	}
 
 	private void setActionKeyMapping() {
@@ -968,50 +1023,42 @@ public class InVoiceScreen extends javax.swing.JFrame {
 		actionMap.put("productLookup", new AbstractAction() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				System.out.println("productLookup action performed.");
-				button_productlookup.requestFocus(true);
-				new ProductSearchView(InVoiceScreen.this);
+				productlookupaction();
+
 			}
 		});
 		actionMap.put("cardPayment", new AbstractAction() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				System.out.println("card Payment action performed.");
-				button_cardpayment.requestFocus(true);
-				JOptionPane.showMessageDialog(null, "Card payment action");
+				cardpaymentaction();
 			}
 		});
 		actionMap.put("salesReturn", new AbstractAction() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				System.out.println("salesReturn action performed.");
-				button_salesreturn.requestFocus(true);
-				JOptionPane.showMessageDialog(null, "sales rerun action");
+				salesreturnaction();
+
 			}
 		});
 		actionMap.put("foodCoupons", new AbstractAction() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				System.out.println("foodCoupons action performed.");
-				button_foodcoupons.requestFocus(true);
-				JOptionPane.showMessageDialog(null, "food coupons action");
+				foodcouponsaction();
+
 			}
 		});
 
 		actionMap.put("voidAll", new AbstractAction() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				JOptionPane.showMessageDialog(null, "Void all action");
-				clearInvoiceTable();
+				voidallaction();
 
 			}
 		});
 		actionMap.put("cashTender", new AbstractAction() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				System.out.println("cashTender action performed.");
-				JOptionPane.showMessageDialog(null, "Cash tender action");
-				button_cashtender.requestFocus(true);
+				cashtenderaction();
 			}
 		});
 
@@ -1074,21 +1121,51 @@ public class InVoiceScreen extends javax.swing.JFrame {
 		if (products.size() == 0) {
 			JOptionPane.showMessageDialog(null, "No product available");
 		} else {
-			int exist_rownum = isProductAlreadyInTable(products.get(0), barcode);
-			System.out.println("is row exist row number: " + exist_rownum);
-			if (exist_rownum == -1) {
-				System.out.println("Add products to hashmap with barcode key");
-				for (Iterator iterator = products.iterator(); iterator.hasNext();) {
-					VtigerProducts vtigerProduct = (VtigerProducts) iterator.next();
-					String barcode1 = vtigerProduct.getBarcode();
-					products_hashmap.put(barcode1, vtigerProduct);
+			// check product quantity database
+			VtigerProducts product = products.get(0);
+			      boolean acept = validateProduct(product);
+			if (acept) {
+				int exist_rownum = isProductAlreadyInTable(product, barcode);
+				System.out.println("is row exist row number: " + exist_rownum);
+				if (exist_rownum == -1) {
+					System.out.println("Add products to hashmap with barcode key");
+					for (Iterator iterator = products.iterator(); iterator.hasNext();) {
+						VtigerProducts vtigerProduct = (VtigerProducts) iterator.next();
+						String barcode1 = vtigerProduct.getBarcode();
+						products_hashmap.put(barcode1, vtigerProduct);
+					}
+					addProductTable(products);
+				} else {
+					updateProductTable(products, exist_rownum);
 				}
-				addProductTable(products);
-			} else {
-				updateProductTable(products, exist_rownum);
 			}
-
+			else {
+				System.out.println("validateProduct failed");
+				JOptionPane.showMessageDialog(null, "Sorry, No stock in store");
+			}
 		}
+	}
+
+	private boolean validateProduct(VtigerProducts product) {
+		
+		int warehouseid= 2;
+		String hsql = "From " + VtigerWarehousestoreInventorytransaction.class.getSimpleName() + " WHERE productid = " + product.getProductid()
+					+ " AND warehousestore_id = " + warehouseid + " ORDER BY warehousestore_transaction_id DESC LIMIT 1";
+		System.out.println("VtigerWarehousestoreInventorytransaction query " + hsql);
+		List executeHQuery = DBLocalHelper.executeHQuery(hsql);
+		if(executeHQuery.size() > 0)
+		{
+			VtigerWarehousestoreInventorytransaction WInvTrans = (VtigerWarehousestoreInventorytransaction)	executeHQuery.get(0);
+			int openingstock = WInvTrans.getOpeningStockQty();
+			if(openingstock > 0) {
+				//now check in vtiger_warehouse_stock for store quantity
+				return true;
+				
+			}
+			
+		}
+		
+		return false;
 	}
 
 	/**

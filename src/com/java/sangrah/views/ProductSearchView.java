@@ -125,6 +125,13 @@ public class ProductSearchView extends JFrame {
 			public void keyReleased(KeyEvent e) {
 				String bar_code = barcode_field.getText();
 
+				if(e.getKeyCode() == 40) {
+					System.out.println("Pressed down");
+					if(table_invoice.getRowCount() >= 0) {
+						table_invoice.requestFocus(true);
+					}
+					
+				}
 				if (bar_code.length() >= 1) {
 					System.out.println("bar_code: " + bar_code);
 					boolean is_number = isNumeric(bar_code);
@@ -136,8 +143,10 @@ public class ProductSearchView extends JFrame {
 
 						clearTableRows();
 						addTableRows(convertToArray(products));
+						if(table_invoice.getRowCount() >= 0) {
 						table_invoice.setRowSelectionInterval(0, 0);
-						table_invoice.requestFocus(true);
+						}
+						
 					} else {
 						// select * from vtiger_products where barcode like '4%'
 						String hsql = "From " + VtigerProducts.class.getSimpleName() + " where productname like '" + bar_code + "%'";
@@ -146,8 +155,10 @@ public class ProductSearchView extends JFrame {
 
 						clearTableRows();
 						addTableRows(convertToArray(products));
+						if(table_invoice.getRowCount() > 0) {
 						table_invoice.setRowSelectionInterval(0, 0);
-						table_invoice.requestFocus(true);
+						}
+						
 					}
 
 				}
@@ -219,6 +230,8 @@ public class ProductSearchView extends JFrame {
 
 				if (!e.isPopupTrigger()) {
 					addProduct_InvoiceScreenTable();
+					ProductSearchView.this.dispose();
+					ProductSearchView.this.show(false);
 				}
 			}
 		});
@@ -261,6 +274,8 @@ public class ProductSearchView extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				addProduct_InvoiceScreenTable();
+				ProductSearchView.this.dispose();
+				ProductSearchView.this.show(false);
 			}
 		});
 

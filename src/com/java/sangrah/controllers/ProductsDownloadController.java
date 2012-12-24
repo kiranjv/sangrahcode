@@ -289,6 +289,10 @@ public class ProductsDownloadController {
 						"crmid", (count_crmentity + 1));
 			System.out.println(crmentity_records.size() + " " + modelname
 						+ " records received from server.");
+			for (Iterator iterator = crmentity_records.iterator(); iterator.hasNext();) {
+				VtigerCrmentity vtigerCrmentity = (VtigerCrmentity) iterator.next();
+				System.out.println("downloaded crm id: "+vtigerCrmentity.getCrmid());
+			}
 			boolean status = DBLocalHelper.saveRecords(modelname, crmentity_records);
 			System.out.println("Local database save status: " + status);
 			System.out.println("Downloading crmentity data completed");

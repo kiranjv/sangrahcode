@@ -59,7 +59,7 @@ public class InvoiceController extends InvoiceUtil {
 		String grandtotal = String.valueOf(invoice_grandamount);
 		String discountamount = String.valueOf(invoice_totaldiscount);
 		String paidamount = String.valueOf(invoice_grandamount);
-		String warehouseid = "3";
+		String warehouseid = "2";
 		String credit_amount = "100.0";
 		String pendingamount = "0";
 
@@ -119,9 +119,12 @@ public class InvoiceController extends InvoiceUtil {
 		if (royalityno != null && !royalityno.isEmpty()) {
 
 			System.out.println("Royality number exists");
-			VtigerContactroyality contactroyalty = (VtigerContactroyality) DBLocalHelper.readRecord(VtigerContactroyality.class.getSimpleName(),
-						"royalitynumber", royalityno).get(0);
-			System.out.println("contact royalty:" + contactroyalty.toString());
+			List royaltycontacts = DBLocalHelper.readRecord(VtigerContactroyality.class.getSimpleName(), "royalitynumber", royalityno);
+			VtigerContactroyality contactroyalty = null;
+			if (royaltycontacts.size() > 0) {
+				contactroyalty = (VtigerContactroyality) royaltycontacts.get(0);
+				System.out.println("contact royalty:" + contactroyalty.toString());
+			}
 
 			/* Fetch the royality points formula */
 			String current_date = DateUtils.getDate(System.currentTimeMillis());
@@ -135,21 +138,23 @@ public class InvoiceController extends InvoiceUtil {
 			System.out.println("Number of royaltys: " + vtigerroyalitys.size());
 			VtigerRoyality vtigerroyality = vtigerroyalitys.get(0);
 			String royalityamount = vtigerroyality.getRoyalityamount();
+			int royalitycount = vtigerroyality.getRoyalityCount();
 
 			/*
 			 * print_r($record); exit;
 			 */
 
 			/* Calculate the royality points earned in this Invoice */
-			int royalitycount = contactroyalty.getRoyalitycount();
-			int contactid = contactroyalty.getContactid();
 
 			int royalitpointsearned = Util.calcRoyaltyPoints(grandtotal, royalityamount, String.valueOf(royalitycount));
 
 			if (contactroyalty.getRoyalitynumber() != null) {
+				int contact_royalitycount = contactroyalty.getRoyalitycount();
+				int contactid = contactroyalty.getContactid();
+
 				int remainingpoints = 0;
 				if (redeem_points > 0) {
-					remainingpoints = royalitycount - redeem_points;
+					remainingpoints = contact_royalitycount - redeem_points;
 				}
 
 				int totalroyalitypoints = royalitpointsearned + remainingpoints;
@@ -303,7 +308,7 @@ public class InvoiceController extends InvoiceUtil {
 
 			int max_transactionid = 0;
 			if (transactions.size() != 0) {
-				int index  = transactions.size() - 1;
+				int index = transactions.size() - 1;
 				max_transactionid = transactions.get(index).getTransactionId();
 			}
 			System.out.println("vitger_inventorytransaction query " + i + " is completed ");

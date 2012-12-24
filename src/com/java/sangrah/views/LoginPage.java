@@ -202,17 +202,7 @@ public class LoginPage extends javax.swing.JFrame {
 									e.printStackTrace();
 								}
 								InVoiceScreen screen = new InVoiceScreen();
-								Toolkit tk = Toolkit.getDefaultToolkit();
-								int xSize = ((int) tk.getScreenSize().getWidth());
-								int ySize = ((int) tk.getScreenSize().getHeight());
-
-								JFrame frame = new JFrame();
-								frame.setSize(xSize, ySize - 10);
-								System.out.println("xSize, ySize: " + xSize + "" + ySize);
-								frame.add(screen);
-								frame.setTitle("Invoice");
-								frame.show();
-
+								
 								login_controller.doBackGroundProcess();
 
 							}

@@ -1,0 +1,5 @@
+$dbconfig['db_server'] = '48339d944f7c0adc52d64dac0660b7d335e04888.rackspaceclouddb.com';
+$dbconfig['db_port'] = ':3306';
+$dbconfig['db_username'] = 'sangrahretail';
+$dbconfig['db_password'] = 'trEE!9Sangrah';
+$dbconfig['db_name'] = 'retail';
