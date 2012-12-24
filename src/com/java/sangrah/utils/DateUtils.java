@@ -79,7 +79,7 @@ public class DateUtils {
 	public static String getDate(long timeInMillSecond) {
 		// Log.v("Safecell :"+"timeInMillSecond",""+timeInMillSecond);
 		Date date = new Date(timeInMillSecond);
-		SimpleDateFormat simpleDate = new SimpleDateFormat("MM/dd/yyyy");
+		SimpleDateFormat simpleDate = new SimpleDateFormat("dd / MM / yyyy");
 		String dateString = simpleDate.format(date);
 		// Log.v("Safecell :"+"Date", dateString);
 		return dateString;
@@ -98,16 +98,7 @@ public class DateUtils {
 
 	}
 
-	public static void main(String[] args) {
-		long timeInMillSeconds = System.currentTimeMillis();
-		System.out.println(dateInString(timeInMillSeconds));
-
-		System.out.println("getTimestamp: " + getTimeStamp(timeInMillSeconds));
-		System.out.println("getDate: " + getDate(timeInMillSeconds));
-		System.out.println("getDateTime: " + getDateTime(timeInMillSeconds));
-	}
-
-	public static String currentDate() {
+		public static String currentDate() {
 		int day, month, year;
 		int second, minute, hour;
 		GregorianCalendar date = new GregorianCalendar();
@@ -139,4 +130,12 @@ public class DateUtils {
 		return dateString;
 	}
 
+	public static void main(String[] args) {
+		long timeInMillSeconds = System.currentTimeMillis();
+		System.out.println(dateInString(timeInMillSeconds));
+
+		System.out.println("getTimestamp: " + getTimeStamp(timeInMillSeconds));
+		System.out.println("getDate: " + getDate(timeInMillSeconds));
+		System.out.println("getDateTime: " + getDateTime(timeInMillSeconds));
+	}
 }

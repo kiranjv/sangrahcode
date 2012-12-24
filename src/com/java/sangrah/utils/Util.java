@@ -104,6 +104,10 @@ public class Util {
 		return String.valueOf(discountamount);
 	}
 
+	public static String toDecimalTwo(float value) {
+		return String.format("%.02f", value);
+	}
+
 	public static int calcRoyaltyPoints(String grandtotal, String royalityamount, String royalitycount) {
 		float grand_total = Float.parseFloat(grandtotal);
 		float royalty_amount = Float.parseFloat(royalityamount);
@@ -112,7 +116,11 @@ public class Util {
 		return (int) Math.floor(grand_total * (royalty_amount / royalty_count));
 
 	}
-
 	
+	public static void main(String[] args) {
+		int f =10;
+		System.out.println(toDecimalTwo(f));
+		
+	}
 
 }

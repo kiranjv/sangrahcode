@@ -266,7 +266,7 @@ public class InVoiceScreen_old_dec3 extends javax.swing.JPanel {
 
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					new ProductSearchView();
+					
 				}
 			});
 
