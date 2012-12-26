@@ -45,20 +45,17 @@ public class InvoicePagePrint implements Printable {
 	 */
 	public int print(Graphics g, PageFormat pageFormat, int page) {
 		if (page < 0 || page >= 1) {
-            return Printable.NO_SUCH_PAGE;
-        }
-		
-		//width: 220.0 height: 841.68
-		int MAX_WIDTH = (int)220.0;
-		int MAX_HEIGHT = (int)841.68;
-		System.out.println("MAX_WIDTH: "+MAX_WIDTH+" MAX_HEIGHT: "+MAX_HEIGHT);
-		
-		int WIDTH_MIDDLE = (int)(MAX_WIDTH / 2);
-		
-		
-		
-		
-		float royalitypointsearned = (float) 3965.75;
+			return Printable.NO_SUCH_PAGE;
+		}
+
+		// width: 220.0 height: 841.68
+		int MAX_WIDTH = (int) 220.0;
+		int MAX_HEIGHT = (int) 841.68;
+		System.out.println("MAX_WIDTH: " + MAX_WIDTH + " MAX_HEIGHT: " + MAX_HEIGHT);
+
+		int WIDTH_MIDDLE = (int) (MAX_WIDTH / 2);
+
+		float royalitypointsearned = Float.parseFloat((String) consolidate_data.get("royalitypointsearned"));
 		int yaxis = 290;
 		int yoffset = 10;
 
@@ -74,11 +71,11 @@ public class InvoicePagePrint implements Printable {
 		g2d.setPaint(Color.black);
 
 		// --- Draw a border arround the page
-		//Rectangle2D.Double border = new Rectangle2D.Double(0, 0, pageFormat.getImageableWidth(), pageFormat.getImageableHeight());
-		//g2d.draw(border);
+		// Rectangle2D.Double border = new Rectangle2D.Double(0, 0, pageFormat.getImageableWidth(),
+		// pageFormat.getImageableHeight());
+		// g2d.draw(border);
 
 		// --- Print the title
-
 
 		Font superbold = new Font("Arail", Font.BOLD, 10);
 		Font bold = new Font("Arail", Font.BOLD, 8);
@@ -91,19 +88,18 @@ public class InvoicePagePrint implements Printable {
 		g2d.drawString(companyname, xval, 20);
 		String address1 = (String) consolidate_data.get("address1");
 		offset = address1.length();
-        xval = (180 / 2) - offset;
+		xval = (180 / 2) - offset;
 		g2d.setFont(normal);
 		g2d.drawString(address1, xval, 35);
 		String address2 = (String) consolidate_data.get("address2");
 		offset = address1.length();
-        xval = (180 / 2) - offset;
+		xval = (180 / 2) - offset;
 		g2d.drawString((String) consolidate_data.get("address2"), xval, 45);
 		String phone = (String) consolidate_data.get("phone");
 		offset = phone.length();
-        xval = (180 / 2) - offset;
+		xval = (180 / 2) - offset;
 		g2d.drawString((String) consolidate_data.get("phone"), xval, 55);
-		
-		
+
 		g2d.drawString("Tax Invoice No. " + (String) consolidate_data.get("invoiceno"), 3, 75);
 		g2d.drawString(DateUtils.currentTime(), 150, 75);
 		g2d.setFont(bold);

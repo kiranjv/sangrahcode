@@ -86,9 +86,8 @@
         <mapping resource="com/java/sangrah/models/VtigerInvoiceshipads.hbm.xml" />
         
         <!-- Manaully added modules -->
-        <mapping resource="com/java/sangrah/models/VtigerModentitynum.hbm.xml" />
-        <mapping resource="com/java/sangrah/models/VtigerModentityNumSeq.hbm.xml" />
-        
+        <mapping resource="com/java/sangrah/models/VtigerModentitynum.hbm.xml"/>
+        <mapping resource="com/java/sangrah/models/VtigerModentityNumSeq.hbm.xml"/>        
         <mapping resource="com/java/sangrah/models/VtigerRoyalityAmount.hbm.xml"/> 
         <mapping resource="com/java/sangrah/models/VtigerSalesman.hbm.xml"/>
         <mapping resource="com/java/sangrah/models/VtigerRoyality.hbm.xml"/>

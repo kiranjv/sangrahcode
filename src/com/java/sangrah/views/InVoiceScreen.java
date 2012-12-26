@@ -29,7 +29,6 @@ import javax.swing.ImageIcon;
 import javax.swing.InputMap;
 import javax.swing.JButton;
 import javax.swing.JComponent;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -41,7 +40,6 @@ import javax.swing.KeyStroke;
 import javax.swing.SpinnerListModel;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.LineBorder;
 import javax.swing.border.SoftBevelBorder;
@@ -56,8 +54,6 @@ import javax.swing.table.JTableHeader;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 
-import org.jdesktop.application.Application;
-
 import com.java.sangrah.controllers.DBLocalHelper;
 import com.java.sangrah.controllers.InvoiceController;
 import com.java.sangrah.controllers.InvoicePrintController;
@@ -67,6 +63,7 @@ import com.java.sangrah.models.VtigerContactdetails;
 import com.java.sangrah.models.VtigerContactroyality;
 import com.java.sangrah.models.VtigerProducts;
 import com.java.sangrah.models.VtigerRoyality;
+import com.java.sangrah.models.VtigerWarehouseStock;
 import com.java.sangrah.models.VtigerWarehousestoreInventorytransaction;
 import com.java.sangrah.utils.DateUtils;
 import com.java.sangrah.utils.Util;
@@ -127,7 +124,7 @@ public class InVoiceScreen extends javax.swing.JFrame {
 	private JScrollPane spane;
 	private int cell_width[] = { 20, 200, 40, 20, 20, 20, 40 };
 	private DefaultTableModel table_invoiceModel;
-	private int previous_quantity = 0;
+	private String previous_quantity = "";
 
 	public static String[] producttable_headder = { "Bar Code", "Item Name", "Rate ", "Qty", "Dis(%)", "VAT(%)", "MRP" };
 	private JLabel label_rsamount;
@@ -172,6 +169,8 @@ public class InVoiceScreen extends javax.swing.JFrame {
 	private int row_selected = -1;
 	private String[][] tabledata;
 	private HashMap<String, String> royality_hashmap = null;
+	private String productvalidity_errormsg;
+	private String warehouseid = "2";
 
 	/**
 	 * Auto-generated main method to display this JInternalFrame inside a new JFrame.
@@ -836,7 +835,8 @@ public class InVoiceScreen extends javax.swing.JFrame {
 							System.out.println("preparing invoice data completed");
 
 							System.out.println("Starting invoices save");
-							int crmid = new InvoiceController().saveInvoice(invoceproduct_list, netprice_list, invoice_totalamount,
+							 InvoiceController invoice_controller = new InvoiceController();
+							 int crmid = invoice_controller.saveInvoice(invoceproduct_list, netprice_list, invoice_totalamount,
 										invoice_totalitemsdiscount, invoice_grandamount, royality_hashmap);
 							System.out.println("Invoice save completed id: " + crmid);
 							System.out.println("------------------------------------------");
@@ -845,9 +845,11 @@ public class InVoiceScreen extends javax.swing.JFrame {
 
 							// print invoice
 							System.out.println("Printing invoice receipt");
+							int earnedpoints = invoice_controller.getEarnedRoyaltyPoints();
+							System.out.println("Royality points earned: "+earnedpoints);
 							InvoicePrintController printcontroller = new InvoicePrintController();
 							printcontroller.printInvoice(tabledata, invoice_totalamount, invoice_totalitemsdiscount, invoice_royaltydiscount,
-										invoice_grandamount, "INV01");
+										invoice_grandamount, "INV01", Util.toDecimalTwo(earnedpoints));
 
 							clearInvoiceTable();
 						}
@@ -1123,48 +1125,86 @@ public class InVoiceScreen extends javax.swing.JFrame {
 		} else {
 			// check product quantity database
 			VtigerProducts product = products.get(0);
-			      boolean acept = validateProduct(product);
+			boolean acept = validateProduct(product);
 			if (acept) {
 				int exist_rownum = isProductAlreadyInTable(product, barcode);
 				System.out.println("is row exist row number: " + exist_rownum);
 				if (exist_rownum == -1) {
 					System.out.println("Add products to hashmap with barcode key");
-					for (Iterator iterator = products.iterator(); iterator.hasNext();) {
-						VtigerProducts vtigerProduct = (VtigerProducts) iterator.next();
-						String barcode1 = vtigerProduct.getBarcode();
-						products_hashmap.put(barcode1, vtigerProduct);
+					addToProductHashMap(products);
+
+					// validate product quantity in store
+					boolean status = validateProductQuantity(product, 1);
+					if (status) {
+						addProductTable(products);
+					} else {
+						JOptionPane.showMessageDialog(null, productvalidity_errormsg);
 					}
-					addProductTable(products);
 				} else {
-					updateProductTable(products, exist_rownum);
+					int existquantity = Integer.parseInt((String) table_invoice.getValueAt(exist_rownum, qty_index));
+					boolean status = validateProductQuantity(product, existquantity + 1);
+					if (status) {
+						updateProductTable(products, exist_rownum);
+					} else {
+						JOptionPane.showMessageDialog(null, productvalidity_errormsg);
+					}
 				}
-			}
-			else {
+			} else {
 				System.out.println("validateProduct failed");
-				JOptionPane.showMessageDialog(null, "Sorry, No stock in store");
+				JOptionPane.showMessageDialog(null, productvalidity_errormsg);
 			}
 		}
 	}
 
+	private void addToProductHashMap(List<VtigerProducts> products) {
+		for (Iterator iterator = products.iterator(); iterator.hasNext();) {
+			VtigerProducts vtigerProduct = (VtigerProducts) iterator.next();
+			String barcode1 = vtigerProduct.getBarcode();
+			products_hashmap.put(barcode1, vtigerProduct);
+		}
+
+	}
+
 	private boolean validateProduct(VtigerProducts product) {
-		
-		int warehouseid= 2;
+
 		String hsql = "From " + VtigerWarehousestoreInventorytransaction.class.getSimpleName() + " WHERE productid = " + product.getProductid()
 					+ " AND warehousestore_id = " + warehouseid + " ORDER BY warehousestore_transaction_id DESC LIMIT 1";
 		System.out.println("VtigerWarehousestoreInventorytransaction query " + hsql);
 		List executeHQuery = DBLocalHelper.executeHQuery(hsql);
-		if(executeHQuery.size() > 0)
-		{
-			VtigerWarehousestoreInventorytransaction WInvTrans = (VtigerWarehousestoreInventorytransaction)	executeHQuery.get(0);
+		if (executeHQuery.size() > 0) {
+			VtigerWarehousestoreInventorytransaction WInvTrans = (VtigerWarehousestoreInventorytransaction) executeHQuery.get(0);
 			int openingstock = WInvTrans.getOpeningStockQty();
-			if(openingstock > 0) {
-				//now check in vtiger_warehouse_stock for store quantity
+			if (openingstock > 0) {
 				return true;
-				
+
+			} else {
+				productvalidity_errormsg = "Sorry, No stock in the store. ";
 			}
-			
+
 		}
-		
+
+		return false;
+	}
+
+	private boolean validateProductQuantity(VtigerProducts product, int quantity) {
+		return validateProductQuantity(product.getProductid(), quantity);
+
+	}
+
+	private boolean validateProductQuantity(int productid, int quantity) {
+		// now check in vtiger_warehouse_stock for store quantity
+		String hsql = "From " + VtigerWarehouseStock.class.getSimpleName() + " WHERE productid = " + productid + " AND warehouseid = " + warehouseid;
+		System.out.println("VtigerWarehousestoreInventorytransaction query " + hsql);
+		List executeHQuery = DBLocalHelper.executeHQuery(hsql);
+		if (executeHQuery.size() > 0) {
+			VtigerWarehouseStock ware_store_stock = (VtigerWarehouseStock) executeHQuery.get(0);
+			int storequantity = ware_store_stock.getQty();
+			System.out.println("Quantity inVtigerWarehouseStock storequantity: " + storequantity);
+			if (storequantity >= quantity)
+				return true;
+			else
+				productvalidity_errormsg = quantity + " quantity is not available in store.";
+		}
 		return false;
 	}
 
@@ -1207,6 +1247,7 @@ public class InVoiceScreen extends javax.swing.JFrame {
 		String rowData[] = calculateInvoiceData(products, "1");
 		// add product to table dynamically
 		if (rowData.length != 0) {
+
 			table_invoiceModel.addRow(rowData);
 			// update lable_numitems with number of invoices
 			lable_numitems.setText(" Items:    " + table_invoiceModel.getRowCount());
@@ -1256,13 +1297,14 @@ public class InVoiceScreen extends javax.swing.JFrame {
 		rowData[barcode_index] = invoice[0]; // vtigerProducts.getBarcode();
 		rowData[productname_index] = invoice[1]; // vtigerProducts.getProductname();
 		rowData[unitprice_index] = invoice[2]; // vtigerProducts.getUnitPrice();
-		rowData[qty_index] = quantity;
-		rowData[discount_index] = invoice[3]; // vtigerProducts.getDiscount();
-		rowData[vat_index] = invoice[4]; // vtigerProducts.getVat();
-		previous_quantity = Integer.parseInt(quantity);
+		rowData[qty_index] = Util.toThreeDecimal(quantity, 3);
+		previous_quantity = rowData[qty_index]; // Maintain prev quantity value
+		rowData[discount_index] = Util.toDecimalTwo(invoice[3]); // vtigerProducts.getDiscount();
+		rowData[vat_index] = Util.toDecimalTwo(invoice[4]); // vtigerProducts.getVat();
+		
 
 		float unit_price = Float.parseFloat(rowData[unitprice_index]);
-		int qty = Integer.parseInt(rowData[qty_index]);
+		float qty = Float.parseFloat(rowData[qty_index]);
 		float discount = Float.parseFloat(rowData[discount_index]);
 		float vat_per = Float.parseFloat(rowData[vat_index]);
 
@@ -1313,10 +1355,21 @@ public class InVoiceScreen extends javax.swing.JFrame {
 			@Override
 			public void tableChanged(TableModelEvent tme) {
 				if (tme.getType() == TableModelEvent.UPDATE) {
+
 					if (tme.getColumn() == qty_index && !CELLUPDATE) {
 						System.out.println("Quantity update");
 						String quatity = (String) table_invoiceModel.getValueAt(tme.getFirstRow(), tme.getColumn());
 						System.out.println("Quatity updated to " + quatity);
+
+						String barcode = (String) table_invoiceModel.getValueAt(tme.getFirstRow(), barcode_index);
+						VtigerProducts vtigerProduct = products_hashmap.get(barcode);
+						boolean status = validateProductQuantity(vtigerProduct, Integer.parseInt(quatity));
+						if (!status) {
+							JOptionPane.showMessageDialog(null, productvalidity_errormsg);
+							table_invoice.setValueAt(previous_quantity, tme.getFirstRow(), qty_index);
+							
+							return;
+						}
 
 						// read updated table row
 						int columncount = table_invoiceModel.getColumnCount();
@@ -1333,6 +1386,8 @@ public class InVoiceScreen extends javax.swing.JFrame {
 						// vtigerProducts.getVat();
 						product[4] = (String) table_invoiceModel.getValueAt(updatedrow, vat_index);
 
+						// update in previous_quantity value
+						previous_quantity = quatity;
 						// Update row with invoice data
 						String rowData[] = calculateInvoiceData(product, String.valueOf(quatity));
 						if (rowData.length != 0) {
@@ -1353,7 +1408,8 @@ public class InVoiceScreen extends javax.swing.JFrame {
 						System.out.println("Discount update");
 						String discount = (String) table_invoiceModel.getValueAt(tme.getFirstRow(), tme.getColumn());
 						System.out.println("Discount updated to " + discount);
-
+						
+						
 						// read updated table row
 						int columncount = table_invoiceModel.getColumnCount();
 						int updatedrow = tme.getFirstRow();
@@ -1364,8 +1420,8 @@ public class InVoiceScreen extends javax.swing.JFrame {
 						float discount_amount = Util.calculate_discount(MRP, Float.parseFloat(discount));
 						if (discount_amount > 0) {
 							CELLUPDATE = true;
-							MRP = Util.Round((MRP - discount_amount), 2);
-							table_invoiceModel.setValueAt(String.valueOf(MRP), updatedrow, mrp_index);
+							String sMRP = Util.toDecimalTwo((MRP - discount_amount));
+							table_invoiceModel.setValueAt(sMRP, updatedrow, mrp_index);
 						}
 						updateTotalLabels();
 						CELLUPDATE = false;
@@ -1581,7 +1637,8 @@ public class InVoiceScreen extends javax.swing.JFrame {
 					redeem_royaltypoints_field.setEditable(false);
 					redeem_royaltypoints_field.setText(" ");
 					Total_money_earned_field.setText(" ");
-					discountamount_lable.setText("0");
+					discountamount_lable.setText("00.00"+RIGHTOFFSET);
+					
 					total_royaltypoints_field.setText("");
 					textfield_customer_mobileno.requestFocus(true);
 				} else {

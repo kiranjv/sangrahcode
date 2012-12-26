@@ -4,6 +4,7 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.text.DecimalFormat;
+import java.util.Arrays;
 
 public class Util {
 
@@ -104,6 +105,10 @@ public class Util {
 		return String.valueOf(discountamount);
 	}
 
+	public static String toDecimalTwo(String value) {
+		return toDecimalTwo(Float.parseFloat(value));
+	}
+
 	public static String toDecimalTwo(float value) {
 		return String.format("%.02f", value);
 	}
@@ -116,11 +121,32 @@ public class Util {
 		return (int) Math.floor(grand_total * (royalty_amount / royalty_count));
 
 	}
-	
+
 	public static void main(String[] args) {
-		int f =10;
+		int f = 10;
 		System.out.println(toDecimalTwo(f));
+		System.out.println(toThreeDecimal(1, 3));
+
+	}
+
+	public static String toThreeDecimal(int num, int digits) {
+		assert digits > 0 : "Invalid number of digits";
+
+		// create variable length array of zeros
+		char[] zeros = new char[digits];
+		Arrays.fill(zeros, '0');
+		// format number as String
+		DecimalFormat df = new DecimalFormat(String.valueOf(zeros));
+
+		return df.format(num);
+	}
+
+	public static String toThreeDecimal(String quantity, int digits) {
+		int qty = Integer.parseInt(quantity);
+		return toThreeDecimal(qty, digits);
 		
 	}
+
+	
 
 }

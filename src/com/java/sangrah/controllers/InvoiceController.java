@@ -40,6 +40,8 @@ import com.java.sangrah.utils.Util;
  */
 public class InvoiceController extends InvoiceUtil {
 
+	private int royalitpointsearned;
+
 	public int saveInvoice(List<InvoiceProduct> invoceproduct_list, String[] netprice_list, float invoice_totalamount, float invoice_totaldiscount,
 				float invoice_grandamount, HashMap<String, String> royalityhash) {
 		String royalityno = null;
@@ -146,9 +148,9 @@ public class InvoiceController extends InvoiceUtil {
 
 			/* Calculate the royality points earned in this Invoice */
 
-			int royalitpointsearned = Util.calcRoyaltyPoints(grandtotal, royalityamount, String.valueOf(royalitycount));
+			royalitpointsearned = Util.calcRoyaltyPoints(grandtotal, royalityamount, String.valueOf(royalitycount));
 
-			if (contactroyalty.getRoyalitynumber() != null) {
+			if (contactroyalty != null) {
 				int contact_royalitycount = contactroyalty.getRoyalitycount();
 				int contactid = contactroyalty.getContactid();
 
@@ -159,10 +161,7 @@ public class InvoiceController extends InvoiceUtil {
 
 				int totalroyalitypoints = royalitpointsearned + remainingpoints;
 
-				royalitpointsearned = totalroyalitypoints;
-
 				/* Update the total royality points */
-
 				String updatecontactroyalty = "UPDATE VtigerContactroyality so SET so.royalitycount = " + totalroyalitypoints
 							+ " WHERE so.contactid = " + contactid + " AND royalitynumber=" + royalityno;
 
@@ -175,12 +174,18 @@ public class InvoiceController extends InvoiceUtil {
 				int cust_id = crm_repo.generateCrmId("Contacts");
 
 				/* Query to fetch last contact number */
-				List<VtigerModentitynum> modentitynums = DBLocalHelper.readRecord(VtigerModentitynum.class.getSimpleName(), "prefix", "CON");
+				
+				String hsql = "From " + VtigerModentitynum.class.getSimpleName() + " WHERE semodule='Contacts'";
+				System.out.println("query: " + hsql);
+				List<VtigerModentitynum> modentitynums = DBLocalHelper.executeHQuery(hsql);
+				System.out.println("Number of modentitys: " + modentitynums.size());
+				
+//				List<VtigerModentitynum> modentitynums = DBLocalHelper.readRecord(VtigerModentitynum.class.getSimpleName(), "semodule", "Contacts");
 				String cur_id = modentitynums.get(0).getCurId();
 				String con_no = "CON" + cur_id;
 
 				/* Query ends */
-				String updatecontactroyalty = "UPDATE VtigerModentitynum so SET so.cur_id = " + (cust_id + 1) + " WHERE so.prefix='CON'";
+				String updatecontactroyalty = "UPDATE VtigerModentitynum so SET so.curId = " + (cust_id + 1) + " WHERE so.prefix='CON'";
 				System.out.println("update sql: " + updatecontactroyalty);
 				DBLocalHelper.executeHUpdateQuery(updatecontactroyalty);
 
@@ -491,5 +496,10 @@ public class InvoiceController extends InvoiceUtil {
 
 		return new_crmid;
 
+	}
+
+	public int getEarnedRoyaltyPoints() {
+		
+		return royalitpointsearned;
 	}
 }

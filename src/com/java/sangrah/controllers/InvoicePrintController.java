@@ -26,10 +26,10 @@ public class InvoicePrintController {
 	ArrayList<HashMap> productdata_list = new ArrayList<HashMap>();
 
 	public void printInvoice(String[][] tabledata, float invoice_totalamount, int invoice_totalitemsdiscount, float invoice_royaltydiscount,
-				float invoice_grandamount, String invoicenum_new) {
+				float invoice_grandamount, String invoicenum_new, String royalitypointsearned) {
 		// prepare consolidate data
 		consolidate_data = prepareConsolidateData(tabledata, invoice_totalamount, invoice_totalitemsdiscount, invoice_royaltydiscount,
-					invoice_grandamount, invoicenum_new);
+					invoice_grandamount, invoicenum_new, royalitypointsearned);
 		// make print layout
 		InvoicePagePrint pageprintdocumnet = new InvoicePagePrint(consolidate_data);
 
@@ -180,9 +180,10 @@ public class InvoicePrintController {
 	 *            - Represent grand total amount
 	 * @param invoicenum_new
 	 *            - Represent the invoice transaction CRM id.
+	 * @param royalitypointsearned 
 	 */
 	private HashMap<String, Object> prepareConsolidateData(String[][] tabledata, float invoice_totalamount, int invoice_totalitemsdiscount,
-				float invoice_royaltydiscount, float invoice_grandamount, String invoicenum_new) {
+				float invoice_royaltydiscount, float invoice_grandamount, String invoicenum_new, String royalitypointsearned) {
 		// company details
 		consolidate_data.put("invoiceno", "INV1");
 		consolidate_data.put("grandtotalinword", "Only");
@@ -195,6 +196,7 @@ public class InvoicePrintController {
 		consolidate_data.put("royaltydiscount", String.valueOf(invoice_royaltydiscount));
 		consolidate_data.put("grandtotal", String.valueOf(invoice_grandamount));
 		consolidate_data.put("totaldiscount", String.valueOf(invoice_totalitemsdiscount));
+		consolidate_data.put("royalitypointsearned", royalitypointsearned);
 		// product data details
 		for (int i = 0; i < tabledata.length; i++) {
 
