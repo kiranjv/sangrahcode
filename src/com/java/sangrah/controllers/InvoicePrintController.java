@@ -1,11 +1,8 @@
 package com.java.sangrah.controllers;
 
-
-
 import java.awt.print.Book;
 import java.awt.print.PageFormat;
 import java.awt.print.Paper;
-import java.awt.print.Printable;
 import java.awt.print.PrinterException;
 import java.awt.print.PrinterJob;
 import java.util.ArrayList;
@@ -15,8 +12,12 @@ import java.util.List;
 import javax.print.PrintService;
 import javax.print.attribute.HashPrintRequestAttributeSet;
 import javax.print.attribute.PrintRequestAttributeSet;
+import javax.print.attribute.PrintServiceAttributeSet;
 import javax.print.attribute.standard.OrientationRequested;
+import javax.print.attribute.standard.PrinterState;
+import javax.swing.JOptionPane;
 
+import com.java.sangrah.utils.Settings;
 import com.java.sangrah.utils.Util;
 import com.java.sangrah.views.InVoiceScreen;
 
@@ -34,15 +35,13 @@ public class InvoicePrintController {
 		InvoicePagePrint pageprintdocumnet = new InvoicePagePrint(consolidate_data);
 
 		// prepare printer
-		//printDocument(pageprintdocumnet);
+		// printDocument(pageprintdocumnet);
 
 		// testing with default
 		defaultPrintPage(pageprintdocumnet);
 	}
 
-	
-	private void defaultPrintPage(InvoicePagePrint pageprintdocumnet)
-	{
+	private void defaultPrintPage(InvoicePagePrint pageprintdocumnet) {
 		PrintService[] service = PrinterJob.lookupPrintServices(); // list
 		// of
 		// printers
@@ -50,54 +49,59 @@ public class InvoicePrintController {
 		PrintService printSvc = null;
 		for (int i = 0; i < count; i++) {
 			System.out.println("Service name: " + service[i].getName());
-			if (service[i].getName().indexOf("PDFcamp") != -1) {
+			if (service[i].getName().indexOf(Settings.PRINTER_NAME) != -1) {
 				printSvc = service[i];
 				i = count;
 			}
 		}
-		
-		//  TSP650  
+
+		if (printSvc == null) {
+			System.out.println("Printer " + Settings.PRINTER_NAME + " is not installed.");
+			JOptionPane.showMessageDialog(null, "Printer " + Settings.PRINTER_NAME + " is not installed.");
+
+		} else if (!isPrinterConnected(printSvc)) {
+			JOptionPane.showMessageDialog(null, "Connect " + Settings.PRINTER_NAME + " printer.");
+			
+		}
+
+		// TSP650 "PDFcamp"
 		PageFormat format = new PageFormat();
-		   Paper paper = new Paper();
+		Paper paper = new Paper();
 
-		   double paperWidth = 3.25;
-		   double paperHeight = 11.69;
-		   double leftMargin = 0.19;
-		   double rightMargin = 0.25;
-		   double topMargin = 0;
-		   double bottomMargin = 0.01;
+		double paperWidth = 3.25;
+		double paperHeight = 11.69;
+		double leftMargin = 0.19;
+		double rightMargin = 0.25;
+		double topMargin = 0;
+		double bottomMargin = 0.01;
 
-		   paper.setSize(paperWidth * 72.0, paperHeight * 72.0);
-		   paper.setImageableArea(leftMargin * 72.0, topMargin * 72.0,
-		        (paperWidth - leftMargin - rightMargin) * 72.0,
-		        (paperHeight - topMargin - bottomMargin) * 72.0);
+		paper.setSize(paperWidth * 72.0, paperHeight * 72.0);
+		paper.setImageableArea(leftMargin * 72.0, topMargin * 72.0, (paperWidth - leftMargin - rightMargin) * 72.0,
+					(paperHeight - topMargin - bottomMargin) * 72.0);
 
-		   format.setPaper(paper);
+		format.setPaper(paper);
 
-		   PrintRequestAttributeSet aset = new HashPrintRequestAttributeSet();
-		   aset.add(OrientationRequested.PORTRAIT);
+		PrintRequestAttributeSet aset = new HashPrintRequestAttributeSet();
+		aset.add(OrientationRequested.PORTRAIT);
 
-		   PrinterJob printerJob = PrinterJob.getPrinterJob();
-		   try {
+		PrinterJob printerJob = PrinterJob.getPrinterJob();
+		try {
 			printerJob.setPrintService(printSvc);
 		} catch (PrinterException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-		   //Printable printable = new ReceiptPrintTest();
-		   format = printerJob.validatePage(format);
-		   //printerJob.setPrintable(printable, format);
-		   printerJob.setPrintable(pageprintdocumnet, format);
-		   try {
-		      printerJob.print(aset);
-		   }
-		   catch (Exception e) {
-		       e.printStackTrace();
-		   }
+		// Printable printable = new ReceiptPrintTest();
+		format = printerJob.validatePage(format);
+		// printerJob.setPrintable(printable, format);
+		printerJob.setPrintable(pageprintdocumnet, format);
+		try {
+			printerJob.print(aset);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
-	
-	
-	
+
 	private void printDocument(InvoicePagePrint pageprintdocumnet) {
 		PrintService[] service = PrinterJob.lookupPrintServices(); // list
 		// of
@@ -180,7 +184,7 @@ public class InvoicePrintController {
 	 *            - Represent grand total amount
 	 * @param invoicenum_new
 	 *            - Represent the invoice transaction CRM id.
-	 * @param royalitypointsearned 
+	 * @param royalitypointsearned
 	 */
 	private HashMap<String, Object> prepareConsolidateData(String[][] tabledata, float invoice_totalamount, int invoice_totalitemsdiscount,
 				float invoice_royaltydiscount, float invoice_grandamount, String invoicenum_new, String royalitypointsearned) {
@@ -221,6 +225,28 @@ public class InvoicePrintController {
 		}
 		consolidate_data.put("productsdata", productdata_list);
 		return consolidate_data;
+	}
+
+	private boolean isPrinterConnected(PrintService printService) {
+
+		PrintServiceAttributeSet printServiceAttributes = printService.getAttributes();
+		PrinterState printerState = (PrinterState) printServiceAttributes.get(PrinterState.class);
+		if (printerState == null) {
+			System.out.println("Printer status is null");
+			return false;
+		} else {
+			return true;
+		}
+	}
+
+	private void waitConnection(long time) {
+		try {
+			Thread.sleep(time);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
 	}
 
 	/**

@@ -1,13 +1,14 @@
 package com.java.sangrah;
 
-import java.math.BigDecimal;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.sql.Date;
 import java.util.ArrayList;
-import java.util.Arrays;
-
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.http.client.ClientProtocolException;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -15,16 +16,15 @@ import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import com.java.sangrah.controllers.DBLocalHelper;
-import com.java.sangrah.models.VtigerContactroyality;
+import com.java.sangrah.controllers.HttpRequestHandler;
+import com.java.sangrah.controllers.ProductsParser;
 import com.java.sangrah.models.VtigerCrmentity;
-import com.java.sangrah.models.VtigerInventorytransaction;
 import com.java.sangrah.models.VtigerProducts;
 import com.java.sangrah.models.VtigerRoyality;
-import com.java.sangrah.models.VtigerRoyalityAmount;
-import com.java.sangrah.repos.LocalDbConfiguration;
 import com.java.sangrah.utils.DateUtils;
-import com.java.sangrah.utils.Util;
 
 public class TestClass {
 
@@ -32,18 +32,44 @@ public class TestClass {
 	static SessionFactory sessionFactory1 = new Configuration().configure("mysqlhibernate.cfg.xml").buildSessionFactory();
 
 	public static void main(String[] args) {
-
-	/*	VtigerContactroyality maxroyalt = (VtigerContactroyality) DBLocalHelper.getMax(VtigerContactroyality.class, "id");
-		// System.out.println("max royal:"+maxroyalt.toString());
-		int royalityid = 0;
-		if (maxroyalt != null)
-			royalityid = maxroyalt.getRoyalityid() + 1;
-		VtigerContactroyality royalty = new VtigerContactroyality(royalityid, 69, "6969", 1000);
-		// royalty.setRoyalityid(maxroyalt.getRoyalityid() + 1);
-		// royalty.setRoyalityid(1);
-		//System.out.println("max:" + royalty.toString());
-		DBLocalHelper.saveRecord(VtigerContactroyality.class.getSimpleName(), royalty);
-*/
+		String url = "http://localhost/sangrahretail/download_data/DownloadData.php?license=123456789&type=";
+		url = url + "newproduct";
+		 JsonObject json = null;
+		try {
+			json = new HttpRequestHandler().readHttpProducts(url);
+		} catch (ClientProtocolException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		ProductsParser parser = new ProductsParser();
+		JsonArray readJsonArray = parser.getJsonArray(json, "products");
+		HashMap<String, String>[] readProductsList = parser.readProductsList(readJsonArray);
+		List<VtigerProducts> generateProducts = parser.generateProducts(readProductsList);
+		parser.insertUpdateProducts(generateProducts);
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		/*
+		 * VtigerContactroyality maxroyalt = (VtigerContactroyality)
+		 * DBLocalHelper.getMax(VtigerContactroyality.class, "id"); //
+		 * System.out.println("max royal:"+maxroyalt.toString()); int royalityid = 0; if (maxroyalt
+		 * != null) royalityid = maxroyalt.getRoyalityid() + 1; VtigerContactroyality royalty = new
+		 * VtigerContactroyality(royalityid, 69, "6969", 1000); //
+		 * royalty.setRoyalityid(maxroyalt.getRoyalityid() + 1); // royalty.setRoyalityid(1);
+		 * //System.out.println("max:" + royalty.toString());
+		 * DBLocalHelper.saveRecord(VtigerContactroyality.class.getSimpleName(), royalty);
+		 */
 		/*
 		 * VtigerRoyalityAmount maxroyalt = (VtigerRoyalityAmount)
 		 * DBLocalHelper.getMax(VtigerRoyalityAmount.class, "id"); VtigerRoyalityAmount royalty =
@@ -53,16 +79,17 @@ public class TestClass {
 		 * DBLocalHelper.saveRecord(VtigerRoyalityAmount.class.getSimpleName(), royalty);
 		 */
 
-		
-		String date = DateUtils.toSqlDate(System.currentTimeMillis());
-		System.out.println(date);
-		String model = VtigerRoyality.class.getSimpleName(); 
-		  VtigerRoyality mroyalt = (VtigerRoyality) DBLocalHelper.getMax(VtigerRoyality.class, "royalityid"); 
-		  VtigerRoyality royalt = new VtigerRoyality(mroyalt.getRoyalityid()+1, 2, "0.5", new Date(System.currentTimeMillis()) , new Date(System.currentTimeMillis()), (short)0);
-		  System.out.println(royalt.toString());
-		  DBLocalHelper.saveRecord(model, royalt);
-		 // System.out.println("max: "+mroyalt.toString());
-		 
+		// String date = DateUtils.toSqlDate(System.currentTimeMillis());
+		// System.out.println(date);
+		// String model = VtigerRoyality.class.getSimpleName();
+		// VtigerRoyality mroyalt = (VtigerRoyality) DBLocalHelper.getMax(VtigerRoyality.class,
+		// "royalityid");
+		// VtigerRoyality royalt = new VtigerRoyality(mroyalt.getRoyalityid()+1, 2, "0.5", new
+		// Date(System.currentTimeMillis()) , new Date(System.currentTimeMillis()), (short)0);
+		// System.out.println(royalt.toString());
+		// DBLocalHelper.saveRecord(model, royalt);
+		// System.out.println("max: "+mroyalt.toString());
+
 		// long time = System.currentTimeMillis();
 		// System.out.println(DateUtils.getDateTime(time));
 

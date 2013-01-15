@@ -449,5 +449,11 @@ public class VtigerInvoice implements java.io.Serializable {
 	public void setStoreid(Integer storeid) {
 		this.storeid = storeid;
 	}
+	
+	@Override
+	public String toString() {
+		String data = "invoiceid: "+invoiceid+" ,invoiceNo: "+invoiceNo+" ,invoicedate: "+invoicedate;
+		return data;
+	}
 
 }

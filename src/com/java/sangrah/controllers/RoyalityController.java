@@ -5,6 +5,7 @@ import java.util.List;
 import com.java.sangrah.models.VtigerContactdetails;
 import com.java.sangrah.models.VtigerContactroyality;
 
+
 public class RoyalityController {
 
 	public VtigerContactroyality readContactRoyality(String royalitynumber) {

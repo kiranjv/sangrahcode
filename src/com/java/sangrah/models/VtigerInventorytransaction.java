@@ -117,17 +117,17 @@ public class VtigerInventorytransaction implements java.io.Serializable {
 		this.vendorId = vendorId;
 	}
 
-	public VtigerInventorytransaction(String date, int productid,
+	public VtigerInventorytransaction(int transactionId, String date, int productid,
 			String productName, int opening_stockqty, int openingCost, int new_crmid,
 			String invoice_no, int reqQty, String warehouseid, String mrp,
 			int closing_stock, int finalStock, String unitprice, String bcode) {
-//		this.transactionId = transactionId;
+		this.transactionId = transactionId;
 		this.date =date;
 		this.productid = productid;
 		this.productName = productName;
 		this.openingStockQty = opening_stockqty;
 		this.openingCost = String.valueOf(openingCost);
-		this.transactionId = new_crmid;
+		this.invId = new_crmid;
 		this.invoiceNo = invoice_no;
 		this.purchaseQty = reqQty;
 		this.storeId = Integer.parseInt(warehouseid);

@@ -1,6 +1,5 @@
 package com.java.sangrah.controllers;
 
-import java.util.Iterator;
 import java.util.List;
 
 import org.hibernate.HibernateException;
@@ -8,9 +7,8 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 
-import com.java.sangrah.models.VtigerCrmentity;
-import com.java.sangrah.repos.LocalDbConfiguration;
 import com.java.sangrah.repos.ServerDBConfiguration;
+
 
 public class DBServerHelper {
 

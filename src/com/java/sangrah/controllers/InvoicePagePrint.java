@@ -56,7 +56,7 @@ public class InvoicePagePrint implements Printable {
 		int WIDTH_MIDDLE = (int) (MAX_WIDTH / 2);
 
 		float royalitypointsearned = Float.parseFloat((String) consolidate_data.get("royalitypointsearned"));
-		int yaxis = 290;
+		int yaxis = 140;
 		int yoffset = 10;
 
 		// --- Create the Graphics2D object

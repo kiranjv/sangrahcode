@@ -1,16 +1,12 @@
 package com.java.sangrah.utils;
 
-import java.util.List;
-
 import org.hibernate.Query;
 import org.hibernate.classic.Session;
 
 import com.java.sangrah.controllers.DBLocalHelper;
-import com.java.sangrah.models.VtigerInventorytransaction;
 import com.java.sangrah.models.VtigerInvoice;
-import com.java.sangrah.models.VtigerModentityNumSeq;
-import com.java.sangrah.models.VtigerModentitynum;
 import com.java.sangrah.repos.LocalDbConfiguration;
+
 
 public class InvoiceUtil {
 

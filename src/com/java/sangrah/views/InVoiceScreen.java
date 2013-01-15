@@ -66,6 +66,7 @@ import com.java.sangrah.models.VtigerRoyality;
 import com.java.sangrah.models.VtigerWarehouseStock;
 import com.java.sangrah.models.VtigerWarehousestoreInventorytransaction;
 import com.java.sangrah.utils.DateUtils;
+import com.java.sangrah.utils.Settings;
 import com.java.sangrah.utils.Util;
 
 /**
@@ -176,6 +177,9 @@ public class InVoiceScreen extends javax.swing.JFrame {
 	 * Auto-generated main method to display this JInternalFrame inside a new JFrame.
 	 */
 	public static void main(String[] args) {
+		
+		
+		
 		// jdp.setPreferredSize(inst.getPreferredSize());
 		try {
 			// UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
@@ -194,6 +198,8 @@ public class InVoiceScreen extends javax.swing.JFrame {
 		 * System.out.println("xSize, ySize: " + xSize + "" + ySize); frame.add(screen);
 		 * frame.setTitle("Invoice"); frame.show();
 		 */
+		
+		Settings.PRINTER_NAME = JOptionPane.showInputDialog("Enter printer name", "TSP650");
 
 	}
 
@@ -453,12 +459,14 @@ public class InVoiceScreen extends javax.swing.JFrame {
 			tabelheadder.setForeground(Color.BLACK);
 			tabelheadder.setFont(new Font("Arial", Font.BOLD, 15));
 			tabelheadder.setOpaque(true);
+			
 			// adding cell value change listener
 			addTableListener();
 
 			// make table formatting
 			for (int i = 0; i < table_invoiceModel.getColumnCount(); i++) {
 				TableColumn column = table_invoice.getColumnModel().getColumn(i);
+				
 				if (i >= 2) {
 					DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
 					centerRenderer.setHorizontalAlignment(JLabel.RIGHT);
@@ -631,22 +639,20 @@ public class InVoiceScreen extends javax.swing.JFrame {
 			redeem_royaltypoints_field.setBounds(179, 327, 157, 30);
 			redeem_royaltypoints_field.setFont(new Font("Arail", Font.BOLD, 12));
 			redeem_royaltypoints_field.addActionListener(RedeempointActionListener);
-			{
-				royeltyno_mainfield = new JTextField();
-				RoyeltyPanel_Box.add(royeltyno_mainfield);
-				royeltyno_mainfield.setBounds(18, 48, 323, 42);
-				royeltyno_mainfield.setName("field_royeltyno");
-				royeltyno_mainfield.setFont(new Font("Arial", Font.CENTER_BASELINE, 15));
-				royeltyno_mainfield.addActionListener(RoyaltyTextListener);
-			}
-			{
-				label_royaltynumber = new JLabel("Enter Loyalty Number (F4) ");
-				RoyeltyPanel_Box.add(label_royaltynumber);
-				label_royaltynumber.setLayout(null);
-				label_royaltynumber.setBounds(20, 7, 331, 36);
-				label_royaltynumber.setName("label_royaltynumber");
-				label_royaltynumber.setFont(new Font("Arial", Font.BOLD, 15));
-			}
+
+			royeltyno_mainfield = new JTextField();
+			RoyeltyPanel_Box.add(royeltyno_mainfield);
+			royeltyno_mainfield.setBounds(18, 48, 323, 42);
+			royeltyno_mainfield.setName("field_royeltyno");
+			royeltyno_mainfield.setFont(new Font("Arial", Font.CENTER_BASELINE, 15));
+			royeltyno_mainfield.addActionListener(RoyaltyTextListener);
+
+			label_royaltynumber = new JLabel("Enter Loyalty Number (F4) ");
+			RoyeltyPanel_Box.add(label_royaltynumber);
+			label_royaltynumber.setLayout(null);
+			label_royaltynumber.setBounds(20, 7, 331, 36);
+			label_royaltynumber.setName("label_royaltynumber");
+			label_royaltynumber.setFont(new Font("Arial", Font.BOLD, 15));
 
 			/** End of the royalty panel elements. */
 
@@ -657,59 +663,51 @@ public class InVoiceScreen extends javax.swing.JFrame {
 			label_fotterimage.setBounds(12, 829, 255, 47);
 			label_fotterimage.setName("jLabel9");
 			label_fotterimage.setText("label_fotterimage");
-			{
-				ButtonsPanel = new JPanel();
-				mainPanel.add(ButtonsPanel);
-				ButtonsPanel.setLayout(null);
-				ButtonsPanel.setBounds(1082, 6, 346, 292);
-				ButtonsPanel.setBorder(BorderFactory.createEtchedBorder(BevelBorder.RAISED));
-				ButtonsPanel.setName("ButtonsPanel");
-				ButtonsPanel.setBackground(new Color(236, 255, 255));
-				{
-					button_productlookup = new JButton(new ImageIcon("resources/products_lookup.png"));
-					button_productlookup.setName("button_productlookup");
-					button_productlookup.setBounds(12, 9, 157, 79);
-					// button_productlookup.setFont(new Font("Arial", Font.BOLD, 14));
-					// button_productlookup.setBackground(Color.red);
-					ButtonsPanel.add(button_productlookup);
 
-				}
-				{
-					button_salesreturn = new JButton(new ImageIcon("resources/sales_return.png"));
-					ButtonsPanel.add(button_salesreturn);
-					button_salesreturn.setName("button_salesreturn");
-					button_salesreturn.setBounds(185, 7, 153, 79);
+			ButtonsPanel = new JPanel();
+			mainPanel.add(ButtonsPanel);
+			ButtonsPanel.setLayout(null);
+			ButtonsPanel.setBounds(1082, 6, 346, 292);
+			ButtonsPanel.setBorder(BorderFactory.createEtchedBorder(BevelBorder.RAISED));
+			ButtonsPanel.setName("ButtonsPanel");
+			ButtonsPanel.setBackground(new Color(236, 255, 255));
 
-				}
-				{
-					button_foodcoupons = new JButton(new ImageIcon("resources/food_coupons.png"));
-					ButtonsPanel.add(button_foodcoupons);
-					// button_foodcoupons.setName("button_foodcoupons");
-					button_foodcoupons.setBounds(13, 103, 157, 79);
+			button_productlookup = new JButton(new ImageIcon(getClass()
+						.getResource("/com/java/sangrah/views/images/products_lookup.png")));
+			button_productlookup.setName("button_productlookup");
+			ButtonsPanel.add(button_productlookup);
+			button_productlookup.setBounds(12, 9, 157, 79);
+			// button_productlookup.setFont(new Font("Arial", Font.BOLD, 14));
+			// button_productlookup.setBackground(Color.red);
+			
 
-				}
-				{
-					button_cardpayment = new JButton(new ImageIcon("resources/card_payment.png"));
-					ButtonsPanel.add(button_cardpayment);
-					// button_cardpayment.setName("button_cardpayment");
-					button_cardpayment.setBounds(186, 102, 153, 79);
+			button_salesreturn = new JButton(new ImageIcon(getClass()
+						.getResource("/com/java/sangrah/views/images/sales_return.png")));
+			ButtonsPanel.add(button_salesreturn);
+			button_salesreturn.setBounds(185, 7, 153, 79);
 
-				}
-				{
-					button_voidall = new JButton(new ImageIcon("resources/voidall.png"));
-					ButtonsPanel.add(button_voidall);
-					button_voidall.setBounds(12, 197, 157, 79);
-					// button_voidall.setName("button_voidall");
+			button_foodcoupons = new JButton(new ImageIcon(getClass()
+						.getResource("/com/java/sangrah/views/images/food_coupons.png")));
+			ButtonsPanel.add(button_foodcoupons);
+			button_foodcoupons.setBounds(13, 103, 157, 79);
 
-				}
-				{
-					button_cashtender = new JButton(new ImageIcon("resources/cash_tender.png"));
-					ButtonsPanel.add(button_cashtender);
-					button_cashtender.setBounds(184, 197, 153, 79);
-					button_cashtender.setName("button_cashtender");
+			button_cardpayment = new JButton(new ImageIcon(getClass()
+						.getResource("/com/java/sangrah/views/images/card_payment.png")));
+			ButtonsPanel.add(button_cardpayment);
+			button_cardpayment.setBounds(186, 102, 153, 79);
 
-				}
-			}
+			button_voidall = new JButton(new ImageIcon(getClass()
+						.getResource("/com/java/sangrah/views/images/voidall.png")));
+			ButtonsPanel.add(button_voidall);
+			button_voidall.setBounds(12, 197, 157, 79);
+			
+
+			button_cashtender = new JButton(new ImageIcon(getClass()
+						.getResource(
+									"/com/java/sangrah/views/images/cash_tender.png")));
+			ButtonsPanel.add(button_cashtender);
+			button_cashtender.setBounds(184, 197, 153, 79);
+			
 
 			// Hot keys action mapping
 			setActionKeyMapping();
@@ -835,8 +833,8 @@ public class InVoiceScreen extends javax.swing.JFrame {
 							System.out.println("preparing invoice data completed");
 
 							System.out.println("Starting invoices save");
-							 InvoiceController invoice_controller = new InvoiceController();
-							 int crmid = invoice_controller.saveInvoice(invoceproduct_list, netprice_list, invoice_totalamount,
+							InvoiceController invoice_controller = new InvoiceController();
+							int crmid = invoice_controller.saveInvoice(invoceproduct_list, netprice_list, invoice_totalamount,
 										invoice_totalitemsdiscount, invoice_grandamount, royality_hashmap);
 							System.out.println("Invoice save completed id: " + crmid);
 							System.out.println("------------------------------------------");
@@ -846,7 +844,7 @@ public class InVoiceScreen extends javax.swing.JFrame {
 							// print invoice
 							System.out.println("Printing invoice receipt");
 							int earnedpoints = invoice_controller.getEarnedRoyaltyPoints();
-							System.out.println("Royality points earned: "+earnedpoints);
+							System.out.println("Royality points earned: " + earnedpoints);
 							InvoicePrintController printcontroller = new InvoicePrintController();
 							printcontroller.printInvoice(tabledata, invoice_totalamount, invoice_totalitemsdiscount, invoice_royaltydiscount,
 										invoice_grandamount, "INV01", Util.toDecimalTwo(earnedpoints));
@@ -1090,6 +1088,7 @@ public class InVoiceScreen extends javax.swing.JFrame {
 
 	private void formatTableCells(TableColumn column, int width) {
 		column.setPreferredWidth(width);
+		
 	}
 
 	public class MyAction implements AdjustmentListener {
@@ -1125,7 +1124,8 @@ public class InVoiceScreen extends javax.swing.JFrame {
 		} else {
 			// check product quantity database
 			VtigerProducts product = products.get(0);
-			boolean acept = validateProduct(product);
+			//boolean acept = validateProduct(product);
+			boolean acept = true; // No need to check quantity in store
 			if (acept) {
 				int exist_rownum = isProductAlreadyInTable(product, barcode);
 				System.out.println("is row exist row number: " + exist_rownum);
@@ -1134,7 +1134,8 @@ public class InVoiceScreen extends javax.swing.JFrame {
 					addToProductHashMap(products);
 
 					// validate product quantity in store
-					boolean status = validateProductQuantity(product, 1);
+					//boolean status = validateProductQuantity(product, 1);
+					boolean status = true; // No need to check quantity in store
 					if (status) {
 						addProductTable(products);
 					} else {
@@ -1142,7 +1143,8 @@ public class InVoiceScreen extends javax.swing.JFrame {
 					}
 				} else {
 					int existquantity = Integer.parseInt((String) table_invoice.getValueAt(exist_rownum, qty_index));
-					boolean status = validateProductQuantity(product, existquantity + 1);
+					//boolean status = validateProductQuantity(product, existquantity + 1);
+					boolean status = true; // No need to check quantity in store
 					if (status) {
 						updateProductTable(products, exist_rownum);
 					} else {
@@ -1301,7 +1303,6 @@ public class InVoiceScreen extends javax.swing.JFrame {
 		previous_quantity = rowData[qty_index]; // Maintain prev quantity value
 		rowData[discount_index] = Util.toDecimalTwo(invoice[3]); // vtigerProducts.getDiscount();
 		rowData[vat_index] = Util.toDecimalTwo(invoice[4]); // vtigerProducts.getVat();
-		
 
 		float unit_price = Float.parseFloat(rowData[unitprice_index]);
 		float qty = Float.parseFloat(rowData[qty_index]);
@@ -1363,11 +1364,12 @@ public class InVoiceScreen extends javax.swing.JFrame {
 
 						String barcode = (String) table_invoiceModel.getValueAt(tme.getFirstRow(), barcode_index);
 						VtigerProducts vtigerProduct = products_hashmap.get(barcode);
-						boolean status = validateProductQuantity(vtigerProduct, Integer.parseInt(quatity));
+						//boolean status = validateProductQuantity(vtigerProduct, Integer.parseInt(quatity));
+						boolean status = true; // No need to check quantity in store
 						if (!status) {
 							JOptionPane.showMessageDialog(null, productvalidity_errormsg);
 							table_invoice.setValueAt(previous_quantity, tme.getFirstRow(), qty_index);
-							
+
 							return;
 						}
 
@@ -1408,8 +1410,7 @@ public class InVoiceScreen extends javax.swing.JFrame {
 						System.out.println("Discount update");
 						String discount = (String) table_invoiceModel.getValueAt(tme.getFirstRow(), tme.getColumn());
 						System.out.println("Discount updated to " + discount);
-						
-						
+
 						// read updated table row
 						int columncount = table_invoiceModel.getColumnCount();
 						int updatedrow = tme.getFirstRow();
@@ -1590,7 +1591,7 @@ public class InVoiceScreen extends javax.swing.JFrame {
 
 		products_hashmap.clear();
 		// clear labels
-		label_rsamount.setText("Rs.  0");
+		label_rsamount.setText("Rs.  00.00");
 		lable_numitems.setText(" Items:    0");
 		totalamount_lable.setText("00.00" + RIGHTOFFSET);
 		discountamount_lable.setText("00.00" + RIGHTOFFSET);
@@ -1637,8 +1638,8 @@ public class InVoiceScreen extends javax.swing.JFrame {
 					redeem_royaltypoints_field.setEditable(false);
 					redeem_royaltypoints_field.setText(" ");
 					Total_money_earned_field.setText(" ");
-					discountamount_lable.setText("00.00"+RIGHTOFFSET);
-					
+					discountamount_lable.setText("00.00" + RIGHTOFFSET);
+
 					total_royaltypoints_field.setText("");
 					textfield_customer_mobileno.requestFocus(true);
 				} else {

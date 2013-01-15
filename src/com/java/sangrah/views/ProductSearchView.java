@@ -19,11 +19,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import javax.swing.AbstractAction;
-import javax.swing.ActionMap;
-import javax.swing.BorderFactory;
-import javax.swing.ComponentInputMap;
 import javax.swing.ImageIcon;
-import javax.swing.InputMap;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -35,13 +31,13 @@ import javax.swing.ListSelectionModel;
 import javax.swing.border.LineBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import javax.swing.plaf.ActionMapUIResource;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableColumn;
 
 import com.java.sangrah.controllers.DBLocalHelper;
 import com.java.sangrah.models.VtigerProducts;
+
 
 /**
  * This code was edited or generated using CloudGarden's Jigloo SWT/Swing GUI Builder, which is free
@@ -188,8 +184,8 @@ public class ProductSearchView extends JFrame {
 		table_invoice.setRowHeight(30);
 		table_invoice.setRowSelectionAllowed(true);
 		table_invoice.setColumnSelectionAllowed(false);
-		table_invoice.setSelectionBackground(new Color(30, 57, 253));
-		table_invoice.setSelectionForeground(new Color(96, 142, 251));
+		table_invoice.setSelectionBackground(new Color(90, 111, 254));//(30, 57, 253));
+		table_invoice.setSelectionForeground(Color.WHITE);//new Color(96, 142, 251));
 		ListSelectionModel selectionModel = table_invoice.getSelectionModel();
 		selectionModel.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		selectionModel.addListSelectionListener(new RowListener(table_invoice));
@@ -223,7 +219,8 @@ public class ProductSearchView extends JFrame {
 		rightpanel.setLayout(new BorderLayout(2, 2));
 
 		/* Initialize select button */
-		button_selectproduct = new JLabel(new ImageIcon("resources/Resized-SelectProduct.jpg"));
+		button_selectproduct = new JLabel(new ImageIcon(getClass()
+					.getResource("/com/java/sangrah/views/images/Resized-SelectProduct.jpg")));
 		button_selectproduct.setSize(200, 200);
 		button_selectproduct.addMouseListener(new MouseAdapter() {
 			public void mouseReleased(MouseEvent e) {
@@ -236,7 +233,8 @@ public class ProductSearchView extends JFrame {
 			}
 		});
 
-		button_goback = new JLabel(new ImageIcon("resources/Resized-GoBack.jpg"));
+		button_goback = new JLabel(new ImageIcon(getClass()
+					.getResource("/com/java/sangrah/views/images/Resized-GoBack.jpg")));
 		button_goback.setSize(200, 200);
 		button_goback.addMouseListener(new MouseAdapter() {
 			public void mouseReleased(MouseEvent e) {

@@ -15,7 +15,7 @@ import com.java.sangrah.repos.LocalDbConfiguration;
 
 public class DBLocalHelper {
 
-	private static SessionFactory localDBSessionFactory = LocalDbConfiguration
+	public static SessionFactory localDBSessionFactory = LocalDbConfiguration
 			.getLocalDBSessionFactory();
 
 	public static List readRecords(String modelname, String columnname,
@@ -271,7 +271,10 @@ public class DBLocalHelper {
 				Projections.max(columnname));
 		Integer maxAge = (Integer) criteria.uniqueResult();
 		session.close();
+		if(maxAge != null) 
 		return maxAge;
+		else
+			return 0;
 	}
 
 	public static Object getMax(Class modulename, String columnname) {

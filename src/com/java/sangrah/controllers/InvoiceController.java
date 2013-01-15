@@ -3,8 +3,6 @@
  */
 package com.java.sangrah.controllers;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -15,9 +13,6 @@ import com.java.sangrah.models.VtigerCashreceiptId;
 import com.java.sangrah.models.VtigerContactdetails;
 import com.java.sangrah.models.VtigerContactroyality;
 import com.java.sangrah.models.VtigerContactscf;
-import com.java.sangrah.models.VtigerCrmentity;
-import com.java.sangrah.models.VtigerCrmentitySeq;
-import com.java.sangrah.models.VtigerCustomerdetails;
 import com.java.sangrah.models.VtigerInventoryproductrel;
 import com.java.sangrah.models.VtigerInventorytransaction;
 import com.java.sangrah.models.VtigerInvoice;
@@ -75,7 +70,7 @@ public class InvoiceController extends InvoiceUtil {
 		// retrive user, bank, warehouse id other details
 
 		// prepare invoice insert query to local db
-		String invoicedate = DateUtils.getDateTime(System.currentTimeMillis());
+		String invoicedate = DateUtils.getDate(System.currentTimeMillis());
 		String type = "";
 		String adjustment = "0";
 		String subtotal = grandtotal;
@@ -87,7 +82,7 @@ public class InvoiceController extends InvoiceUtil {
 		String email = "kiran@treewalker.in";
 		String cash = grandtotal;
 		String credit = "";
-		String card = "";
+		String card = "No";
 		String bankname = "";
 		String chq_date = "";
 		String cheque_no = "";
@@ -137,11 +132,18 @@ public class InvoiceController extends InvoiceUtil {
 			String H_RoyaltyUpdate = "From " + VtigerRoyality.class.getSimpleName() + " WHERE deleted=0";
 			System.out.println("query: " + H_RoyaltyUpdate);
 			List<VtigerRoyality> vtigerroyalitys = DBLocalHelper.executeHQuery(H_RoyaltyUpdate);
-			System.out.println("Number of royaltys: " + vtigerroyalitys.size());
+			int royalitysize = vtigerroyalitys.size();
+			System.out.println("Number of royaltys: " + royalitysize);
+			String royalityamount = "0";
+			int royalitycount = 0;
+			if(royalitysize == 0) {
+				
+				}
+			else {
 			VtigerRoyality vtigerroyality = vtigerroyalitys.get(0);
-			String royalityamount = vtigerroyality.getRoyalityamount();
-			int royalitycount = vtigerroyality.getRoyalityCount();
-
+			 royalityamount = vtigerroyality.getRoyalityamount();
+			 royalitycount = vtigerroyality.getRoyalityCount();
+			}
 			/*
 			 * print_r($record); exit;
 			 */
@@ -178,10 +180,13 @@ public class InvoiceController extends InvoiceUtil {
 				String hsql = "From " + VtigerModentitynum.class.getSimpleName() + " WHERE semodule='Contacts'";
 				System.out.println("query: " + hsql);
 				List<VtigerModentitynum> modentitynums = DBLocalHelper.executeHQuery(hsql);
-				System.out.println("Number of modentitys: " + modentitynums.size());
+				int num_modentitys = modentitynums.size();
+				System.out.println("Number of modentitys: " +num_modentitys );
+				String cur_id = "1";
+                if(num_modentitys != 0 ) {
+                	cur_id = modentitynums.get(0).getCurId();
+                }
 				
-//				List<VtigerModentitynum> modentitynums = DBLocalHelper.readRecord(VtigerModentitynum.class.getSimpleName(), "semodule", "Contacts");
-				String cur_id = modentitynums.get(0).getCurId();
 				String con_no = "CON" + cur_id;
 
 				/* Query ends */
@@ -318,50 +323,60 @@ public class InvoiceController extends InvoiceUtil {
 			}
 			System.out.println("vitger_inventorytransaction query " + i + " is completed ");
 
-			// SELECT warehousestore_transaction_id AS MAX, opening_stock_qty,
-			// closing_stock FROM vtiger_warehousestore_inventorytransaction
-			// WHERE productid= 18 AND warehousestore_id = 3 ORDER BY
-			// warehousestore_transaction_id DESC LIMIT 1
+			
 
-			hsql = "From " + VtigerWarehousestoreInventorytransaction.class.getSimpleName() + " WHERE productid = " + productid
-						+ " AND warehousestore_id = " + warehouseid + " ORDER BY warehousestore_transaction_id DESC LIMIT 1";
-			System.out.println("VtigerWarehousestoreInventorytransaction query " + i + " is : " + hsql);
-			VtigerWarehousestoreInventorytransaction transWS = (VtigerWarehousestoreInventorytransaction) DBLocalHelper.executeHQuery(hsql).get(0);
-			System.out.println("VtigerWarehousestoreInventorytransaction query " + i + " is completed ");
+			boolean is_warehouse_stock = false;
+			if(is_warehouse_stock){ //if (transWS.getOpeningStockQty() > 0) {
+				
+				
+				// SELECT warehousestore_transaction_id AS MAX, opening_stock_qty,
+				// closing_stock FROM vtiger_warehousestore_inventorytransaction
+				// WHERE productid= 18 AND warehousestore_id = 3 ORDER BY
+				// warehousestore_transaction_id DESC LIMIT 1
 
-			String getTransDetails = "FROM " + VtigerInventorytransaction.class.getSimpleName() + " WHERE transactionId=" + max_transactionid;
-			System.out.println("vtiger_inventorytransaction query " + i + " is : " + getTransDetails);
-			VtigerInventorytransaction transInvTransaction = (VtigerInventorytransaction) DBLocalHelper.executeHQuery(getTransDetails).get(0);
-			System.out.println("vtiger_inventorytransaction query " + i + " is completed ");
+				hsql = "From " + VtigerWarehousestoreInventorytransaction.class.getSimpleName() + " WHERE productid = " + productid
+							+ " AND warehousestore_id = " + warehouseid + " ORDER BY warehousestore_transaction_id DESC LIMIT 1";
+				System.out.println("VtigerWarehousestoreInventorytransaction query " + i + " is : " + hsql);
+				VtigerWarehousestoreInventorytransaction transWS = (VtigerWarehousestoreInventorytransaction) DBLocalHelper.executeHQuery(hsql).get(0);
+				System.out.println("VtigerWarehousestoreInventorytransaction query " + i + " is completed ");
 
-			// "SELECT cost FROM vtiger_products WHERE productid='" . $productid
-			// . "'";
-			List<VtigerProducts> productResultSet = DBLocalHelper.readRecord(VtigerProducts.class.getSimpleName(), "productid", productid);
-			float rowCost = Float.parseFloat(productResultSet.get(0).getCost());
+				String getTransDetails = "FROM " + VtigerInventorytransaction.class.getSimpleName() + " WHERE transactionId=" + max_transactionid;
+				System.out.println("vtiger_inventorytransaction query " + i + " is : " + getTransDetails);
+				VtigerInventorytransaction transInvTransaction = (VtigerInventorytransaction) DBLocalHelper.executeHQuery(getTransDetails).get(0);
+				System.out.println("vtiger_inventorytransaction query " + i + " is completed ");
 
-			int opening_stock = (int) transInvTransaction.getClosingStock();
-			int newclosing_stock = opening_stock - Integer.parseInt(qty);
-			int opening_cost = Math.round(rowCost);
+				// "SELECT cost FROM vtiger_products WHERE productid='" . $productid
+				// . "'";
+				List<VtigerProducts> productResultSet = DBLocalHelper.readRecord(VtigerProducts.class.getSimpleName(), "productid", productid);
+				float rowCost = Float.parseFloat(productResultSet.get(0).getCost());
 
-			/******* Fetch Qty in stock from warehouse/store ********/
-			String hquery_WS = "FROM " + VtigerWarehouseStock.class.getSimpleName() + " WHERE warehouseid = " + warehouseid + " AND productid = "
-						+ productid;
-			System.out.println("VtigerWarehouseStock query " + i + " is : " + hquery_WS);
-			List<VtigerWarehouseStock> resultSetWS = DBLocalHelper.executeHQuery(hquery_WS);
-			/***************/
+				int opening_stock = (int) transInvTransaction.getClosingStock();
+				int newclosing_stock = opening_stock - Integer.parseInt(qty);
+				int opening_cost = Math.round(rowCost);
 
-			String hqueryIT = "FROM " + VtigerInventorytransaction.class.getSimpleName() + " WHERE productid =" + productid
-						+ " AND final_stock > 0 ORDER BY transaction_id";
-			System.out.println("VtigerInventorytransaction query " + i + " is : " + hqueryIT);
-			List<VtigerInventorytransaction> selectTransactionOfTheProductResultSet = DBLocalHelper.executeHQuery(hqueryIT);
+				/******* Fetch Qty in stock from warehouse/store ********/
+				String hquery_WS = "FROM " + VtigerWarehouseStock.class.getSimpleName() + " WHERE warehouseid = " + warehouseid + " AND productid = "
+							+ productid;
+				System.out.println("VtigerWarehouseStock query " + i + " is : " + hquery_WS);
+				List<VtigerWarehouseStock> resultSetWS = DBLocalHelper.executeHQuery(hquery_WS);
+				/***************/
 
-			String selectTransactionOfTheWHProduct = "FROM " + VtigerWarehousestoreInventorytransaction.class.getSimpleName() + " WHERE productid = "
-						+ productid + " AND warehousestore_id = " + warehouseid + "AND final_stock > 0 ORDER BY warehousestore_transaction_id";
-			System.out.println("VtigerWarehousestoreInventorytransaction query " + i + " is : " + selectTransactionOfTheWHProduct);
-			List<VtigerWarehousestoreInventorytransaction> selectTransactionOfTheWHProductResultSet = DBLocalHelper
-						.executeHQuery(selectTransactionOfTheWHProduct);
+				String hqueryIT = "FROM " + VtigerInventorytransaction.class.getSimpleName() + " WHERE productid =" + productid
+							+ " AND final_stock > 0 ORDER BY transaction_id";
+				System.out.println("VtigerInventorytransaction query " + i + " is : " + hqueryIT);
+				List<VtigerInventorytransaction> selectTransactionOfTheProductResultSet = DBLocalHelper.executeHQuery(hqueryIT);
 
-			if (transWS.getOpeningStockQty() > 0) {
+				String selectTransactionOfTheWHProduct = "FROM " + VtigerWarehousestoreInventorytransaction.class.getSimpleName() + " WHERE productid = "
+							+ productid + " AND warehousestore_id = " + warehouseid + "AND final_stock > 0 ORDER BY warehousestore_transaction_id";
+				System.out.println("VtigerWarehousestoreInventorytransaction query " + i + " is : " + selectTransactionOfTheWHProduct);
+				List<VtigerWarehousestoreInventorytransaction> selectTransactionOfTheWHProductResultSet = DBLocalHelper
+							.executeHQuery(selectTransactionOfTheWHProduct);
+				
+				
+				
+				
+				
+				
 				int opening_stock_WS = transWS.getClosingStock();
 				int newclosing_stock_WS = opening_stock_WS - Integer.parseInt(qty);
 
@@ -378,8 +393,10 @@ public class InvoiceController extends InvoiceUtil {
 					if (reqQty <= (int) selectTransactionOfTheProductArray.getFinalStock()) {
 						int rows = DBLocalHelper.getRowCount("VtigerInventorytransaction");
 						System.out.println(rows + " rows in VtigerInventorytransaction");
+						rows = rows +1;
+						System.out.println("Current transaction id: "+rows);
 						String date = DateUtils.getDateTime(System.currentTimeMillis());
-						VtigerInventorytransaction transaction = new VtigerInventorytransaction(date, productid, productName, opening_stock,
+						VtigerInventorytransaction transaction = new VtigerInventorytransaction(rows,date, productid, productName, opening_stock,
 									opening_cost, new_crmid, invoice_no, reqQty, warehouseid, mrp, newclosing_stock, 0, mrp, bcode);
 						System.out.println("VtigerInventorytransaction primarykey: " + transaction.getTransactionId());
 						DBLocalHelper.saveRecord(VtigerInventorytransaction.class.getSimpleName(), transaction);
@@ -394,8 +411,10 @@ public class InvoiceController extends InvoiceUtil {
 					} else {
 						int rows = DBLocalHelper.getRowCount("VtigerInventorytransaction");
 						System.out.println(rows + " rows in VtigerInventorytransaction");
+						rows = rows +1;
+						System.out.println("Current transaction id: "+rows);
 						String date = DateUtils.getDateTime(System.currentTimeMillis());
-						VtigerInventorytransaction transaction = new VtigerInventorytransaction(date, productid, productName, opening_stock,
+						VtigerInventorytransaction transaction = new VtigerInventorytransaction(rows, date, productid, productName, opening_stock,
 									opening_cost, new_crmid, invoice_no, reqQty, warehouseid, mrp, newclosing_stock, 0, mrp, bcode);
 						System.out.println("VtigerInventorytransaction primarykey: " + transaction.getTransactionId());
 						DBLocalHelper.saveRecord(VtigerInventorytransaction.class.getSimpleName(), transaction);
@@ -475,9 +494,7 @@ public class InvoiceController extends InvoiceUtil {
 			System.out.println("Updating products quantity in stock completed");
 
 			// for store
-
-			String update_vtiger_warehouse_stock = "UPDATE vtiger_warehouse_stock SET qty = qty - " + qty + " WHERE productid = " + productid
-						+ " AND warehouseid = " + warehouseid;
+			/*
 			String HSQL = "From " + VtigerWarehouseStock.class.getSimpleName() + " WHERE productid = " + productid + " AND warehouseid = "
 						+ warehouseid;
 
@@ -489,7 +506,7 @@ public class InvoiceController extends InvoiceUtil {
 			qunty = warehousestock.getQty() - Integer.parseInt(qty);
 			warehousestock.setQty(Math.round(qunty));
 			DBLocalHelper.updateRecord("VtigerWarehouseStock", warehousestock);
-			System.out.println("Updating warehousestock quantity in stock completed");
+			System.out.println("Updating warehousestock quantity in stock completed");*/
 			/***********/
 
 		}
@@ -499,7 +516,7 @@ public class InvoiceController extends InvoiceUtil {
 	}
 
 	public int getEarnedRoyaltyPoints() {
-		
+
 		return royalitpointsearned;
 	}
 }

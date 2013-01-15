@@ -311,5 +311,11 @@ public class VtigerInventoryproductrel implements java.io.Serializable {
 	public void setTax6(String tax6) {
 		this.tax6 = tax6;
 	}
+	
+	@Override
+	public String toString() {
+		String data = "id: "+id+" , productid: "+productid;
+		return data;
+	}
 
 }

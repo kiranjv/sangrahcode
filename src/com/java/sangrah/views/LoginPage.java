@@ -28,8 +28,10 @@ import javax.swing.SwingUtilities;
 
 import org.apache.log4j.Logger;
 
+import com.java.sangrah.controllers.DBLocalHelper;
 import com.java.sangrah.controllers.LoginController;
 import com.java.sangrah.controllers.ProductsDownloadController;
+import com.java.sangrah.models.VtigerUsers;
 import com.java.sangrah.repos.HCrmEntityRepository;
 
 /**
@@ -63,7 +65,8 @@ public class LoginPage extends javax.swing.JFrame {
 	 * Auto-generated main method to display this JFrame
 	 */
 	public static void main(String[] args) {
-		try {
+		try { 
+			DBLocalHelper.readRecords("VtigerUsers");
 			UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
 			SwingUtilities.invokeLater(new Runnable() {
 				public void run() {

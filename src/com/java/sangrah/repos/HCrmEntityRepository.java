@@ -3,20 +3,15 @@
  */
 package com.java.sangrah.repos;
 
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
-import org.hibernate.Criteria;
-import org.hibernate.HibernateException;
 import org.hibernate.Query;
+import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
-import org.hibernate.Session;
 
 import com.java.sangrah.controllers.DBLocalHelper;
 import com.java.sangrah.controllers.DBServerHelper;
-import com.java.sangrah.models.CrmEntity;
 import com.java.sangrah.models.VtigerCrmentity;
 import com.java.sangrah.models.VtigerCrmentitySeq;
 import com.java.sangrah.utils.DateUtils;
@@ -149,15 +144,15 @@ public class HCrmEntityRepository implements IRepository {
 		List<VtigerCrmentitySeq> seq_list = DBLocalHelper.readRecords(VtigerCrmentitySeq.class.getSimpleName());
 		VtigerCrmentitySeq seq_object = seq_list.get(0);
 		crmid = seq_object.getId();
-		System.out.println("Previous crm id: "+crmid);
+		//System.out.println("Previous crm id: "+crmid);
 		crmid = crmid + 1;
-		System.out.println("Current crm id: "+crmid);
+		//System.out.println("Current crm id: "+crmid);
 		updateCrmSeq(crmid);
 		
 		
 		// "INSERT INTO vtiger_crmentity(crmid,smcreatorid,smownerid,modifiedby,setype,createdtime,modifiedtime,viewedtime,`VERSION`,presence,deleted)
 		String now_time = DateUtils.getDateTime(System.currentTimeMillis());
-		System.out.println("date: "+now_time);
+		//System.out.println("date: "+now_time);
 		VtigerCrmentity crm_entiry = new VtigerCrmentity(crmid, 1, 1, 0, module ,now_time, now_time, now_time,0,1,0);
 		storeLocalEntitys(crm_entiry);
 		return crmid;

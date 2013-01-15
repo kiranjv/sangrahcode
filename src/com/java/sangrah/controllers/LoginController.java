@@ -12,8 +12,11 @@ import javax.swing.JProgressBar;
 import javax.swing.SwingUtilities;
 
 import com.java.sangrah.models.User;
+import com.java.sangrah.models.VtigerUsers;
+import com.java.sangrah.repos.HUserRepo;
 import com.java.sangrah.repos.UserRepository;
 import com.java.sangrah.utils.PasswordEncryptHelper;
+
 
 public class LoginController {
 
@@ -24,11 +27,11 @@ public class LoginController {
 	public boolean doLogin(String username, String password) {
 
 		// Retrieve encrypted password from Users table
-		UserRepository user_repo = new UserRepository();
-		User user = user_repo.getUserDetails(username);
+		HUserRepo userrepo = new HUserRepo();
+		VtigerUsers user = userrepo.getUserDetails(username);
 		// convert the Password to encrypted password
 		String encrypted_pass = new PasswordEncryptHelper().encrypt_password(
-				username, password, user.getCrypt_type());
+				username, password, user.getCryptType());
 		System.out.println("Returned encrypted password: " + encrypted_pass);
 		if (encrypted_pass != null) {
 			String server_encrypted_password = "$1$ad$hsl2KFybNRnbXBa.b.WWv.";// user.getEncrypted_password();
@@ -75,17 +78,22 @@ public class LoginController {
 			public void run() {
 
 				try {
-					ProductsDownloadController pdownload_controller = new ProductsDownloadController();
-					pdownload_controller.productsDownload();
-					Thread.sleep(1000);
+					/*Code download product direct server database connection. */
+					
+					//ProductsDownloadController pdownload_controller = new ProductsDownloadController();
+					//pdownload_controller.productsDownload();
+					
+					new HProductsDownloadHandler(frame).loadProducts();
+					Thread.sleep(10000);
 
 					// when loading is finished, make frame disappear
 					SwingUtilities.invokeLater(new Runnable() {
 						public void run() {
 							frame.setVisible(false);
+							frame.dispose();
 						}
 					});
-				} catch (InterruptedException e) {
+				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}

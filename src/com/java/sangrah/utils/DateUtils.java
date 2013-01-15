@@ -79,7 +79,7 @@ public class DateUtils {
 	public static String getDate(long timeInMillSecond) {
 		// Log.v("Safecell :"+"timeInMillSecond",""+timeInMillSecond);
 		Date date = new Date(timeInMillSecond);
-		SimpleDateFormat simpleDate = new SimpleDateFormat("dd / MM / yyyy");
+		SimpleDateFormat simpleDate = new SimpleDateFormat("dd/MM/yyyy");
 		String dateString = simpleDate.format(date);
 		// Log.v("Safecell :"+"Date", dateString);
 		return dateString;
